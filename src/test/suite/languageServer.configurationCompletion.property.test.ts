@@ -334,6 +334,7 @@ suite("Language Server Configuration Completion - Property-Based Tests", () => {
               cursorLine = 2;
               break;
             case "end":
+            default:
               code = `${functionName}({\n${propsText}${
                 propsText ? ",\n" : ""
               }  \n});`;
