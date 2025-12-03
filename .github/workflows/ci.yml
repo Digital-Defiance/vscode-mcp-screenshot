@@ -25,11 +25,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Compile TypeScript
-        run: npm run compile
+        run: yarn compile
 
       - name: Package extension
         run: |
@@ -41,13 +44,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
-          xvfb-run -a npm test
+          xvfb-run -a yarn test
         env:
           CI: true
 
       - name: Test extension (Windows/macOS)
         if: matrix.os != 'ubuntu-latest'
-        run: npm test
+        run: yarn test
         env:
           CI: true
 
@@ -64,11 +67,14 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Compile TypeScript
-        run: npm run compile
+        run: yarn compile
 
       - name: Package extension
         run: |
