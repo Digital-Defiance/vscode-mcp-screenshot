@@ -2,6 +2,12 @@
 
 Cross-platform screenshot capture extension for Visual Studio Code with Model Context Protocol (MCP) integration.
 
+## 🔗 Repository
+
+This package is now maintained in its own repository: **[https://github.com/Digital-Defiance/vscode-mcp-screenshot](https://github.com/Digital-Defiance/vscode-mcp-screenshot)**
+
+This repository is part of the [https://github.com/Digital-Defiance/ai-capabilitites-suite](AI Capabilitites Suite) on GitHub.
+
 ## Features
 
 ### Screenshot Capabilities
