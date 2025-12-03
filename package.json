@@ -1,0 +1,209 @@
+{
+  "name": "mcp-screenshot",
+  "displayName": "MCP Screenshot",
+  "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance",
+  "version": "1.0.0",
+  "publisher": "DigitalDefiance",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Testing"
+  ],
+  "keywords": [
+    "screenshot",
+    "capture",
+    "mcp",
+    "image",
+    "annotation",
+    "ai-debugging",
+    "copilot",
+    "pii-masking",
+    "privacy"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact",
+    "onLanguage:json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mcp-screenshot.captureFullScreen",
+        "title": "MCP Screenshot: Capture Full Screen",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "mcp-screenshot.captureWindow",
+        "title": "MCP Screenshot: Capture Window",
+        "icon": "$(window)"
+      },
+      {
+        "command": "mcp-screenshot.captureRegion",
+        "title": "MCP Screenshot: Capture Region",
+        "icon": "$(selection)"
+      },
+      {
+        "command": "mcp-screenshot.listDisplays",
+        "title": "MCP Screenshot: List Displays"
+      },
+      {
+        "command": "mcp-screenshot.listWindows",
+        "title": "MCP Screenshot: List Windows"
+      },
+      {
+        "command": "mcp-screenshot.openSettings",
+        "title": "MCP Screenshot: Open Settings"
+      },
+      {
+        "command": "mcp.screenshot.capture",
+        "title": "MCP Screenshot: Capture (LSP)"
+      },
+      {
+        "command": "mcp.screenshot.getCapabilities",
+        "title": "MCP Screenshot: Get Capabilities (LSP)"
+      }
+    ],
+    "configuration": {
+      "title": "MCP Screenshot",
+      "properties": {
+        "mcpScreenshot.defaultFormat": {
+          "type": "string",
+          "enum": [
+            "png",
+            "jpeg",
+            "webp",
+            "bmp"
+          ],
+          "default": "png",
+          "description": "Default image format for screenshots"
+        },
+        "mcpScreenshot.defaultQuality": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 90,
+          "description": "Default quality for lossy formats (1-100)"
+        },
+        "mcpScreenshot.saveDirectory": {
+          "type": "string",
+          "default": "${workspaceFolder}/screenshots",
+          "description": "Default directory for saving screenshots"
+        },
+        "mcpScreenshot.enablePIIMasking": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable PII detection and masking by default"
+        },
+        "mcpScreenshot.serverCommand": {
+          "type": "string",
+          "default": "npx",
+          "description": "Command to run MCP screenshot server"
+        },
+        "mcpScreenshot.serverArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "-y",
+            "@ai-capabilities-suite/mcp-screenshot"
+          ],
+          "description": "Arguments for MCP screenshot server command"
+        },
+        "mcpScreenshot.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save screenshots to disk"
+        },
+        "mcpScreenshot.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start MCP server when VS Code opens"
+        },
+        "mcpScreenshot.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notifications for screenshot operations"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "mcp-screenshot.captureFullScreen"
+        },
+        {
+          "command": "mcp-screenshot.captureWindow"
+        },
+        {
+          "command": "mcp-screenshot.captureRegion"
+        },
+        {
+          "command": "mcp-screenshot.listDisplays"
+        },
+        {
+          "command": "mcp-screenshot.listWindows"
+        },
+        {
+          "command": "mcp-screenshot.openSettings"
+        },
+        {
+          "command": "mcp.screenshot.capture"
+        },
+        {
+          "command": "mcp.screenshot.getCapabilities"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "vsce:login": "vsce login DigitalDefiance",
+    "package": "vsce package --no-dependencies",
+    "publish": "vsce publish --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^3.7.1",
+    "fast-check": "^3.15.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@ai-capabilities-suite/mcp-screenshot": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digital-defiance/ai-capabilities-suite.git",
+    "directory": "packages/vscode-mcp-screenshot"
+  },
+  "bugs": {
+    "url": "https://github.com/digital-defiance/ai-capabilities-suite/issues"
+  },
+  "homepage": "https://github.com/digital-defiance/ai-capabilities-suite/tree/main/packages/vscode-mcp-screenshot",
+  "license": "MIT",
+  "author": {
+    "name": "Digital Defiance",
+    "email": "info@digitaldefiance.org"
+  }
+}
