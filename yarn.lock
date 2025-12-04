@@ -5,9 +5,9 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@ai-capabilities-suite/mcp-screenshot@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@ai-capabilities-suite/mcp-screenshot@npm:1.0.1"
+"@ai-capabilities-suite/mcp-screenshot@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@ai-capabilities-suite/mcp-screenshot@npm:1.0.2"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.23.0"
     active-win: "npm:^8.1.0"
@@ -19,7 +19,7 @@ __metadata:
     zod: "npm:^4.1.13"
   bin:
     mcp-screenshot: dist/src/cli.js
-  checksum: 10c0/b62451d41d01bfbf25d02d62bde5bc92246c731896bb7dc2a1cae2213fa0edd7c43a45f6da1964f127587db1474f5345cc528f49b301edab2db4ff00d837bd50
+  checksum: 10c0/05fbe1951c422d9570c46c5604c843b2c7bcdc8fb4c386e2d76fbc731903bb9d7a0623bcd37e474d45948df54e5dcdff80bc92307a24aa64011c6163fb2602d2
   conditions: (os=darwin | os=linux | os=win32)
   languageName: node
   linkType: hard
@@ -140,29 +140,29 @@ __metadata:
   linkType: hard
 
 "@azure/msal-browser@npm:^4.2.0":
-  version: 4.26.2
-  resolution: "@azure/msal-browser@npm:4.26.2"
+  version: 4.27.0
+  resolution: "@azure/msal-browser@npm:4.27.0"
   dependencies:
-    "@azure/msal-common": "npm:15.13.2"
-  checksum: 10c0/2150f5f997e699d2f598ac87dea8634dd6226c3573838b575cec157ffbba029860e41296a6da9b66ff64092eff69ec3c9aee4a0112a5c89ede06c03a72b02889
+    "@azure/msal-common": "npm:15.13.3"
+  checksum: 10c0/da10b0adc1c9c937a57ae66eb70ab53682e71171a0a48499931b745bc91c4f68f81e6cf52e5280a78b5865963e2246f60321822a551ed9a340cc3c4ae1ccfdcd
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:15.13.2":
-  version: 15.13.2
-  resolution: "@azure/msal-common@npm:15.13.2"
-  checksum: 10c0/706e9471c14b92ac4015a50ee3724dc459e4377572caba369ae5cefc225605165717af865290c2e245f225eae6104df220c44b7e24a5ebc116ac0a59ec254a64
+"@azure/msal-common@npm:15.13.3":
+  version: 15.13.3
+  resolution: "@azure/msal-common@npm:15.13.3"
+  checksum: 10c0/0d71c31ad098153985cb918c2bda9698aae0a15b659da5c0867728313ba6743854cc112332b39ba1a187b81dfc0abba22b1c22ee6f245e511c5ecec179832b03
   languageName: node
   linkType: hard
 
 "@azure/msal-node@npm:^3.5.0":
-  version: 3.8.3
-  resolution: "@azure/msal-node@npm:3.8.3"
+  version: 3.8.4
+  resolution: "@azure/msal-node@npm:3.8.4"
   dependencies:
-    "@azure/msal-common": "npm:15.13.2"
+    "@azure/msal-common": "npm:15.13.3"
     jsonwebtoken: "npm:^9.0.0"
     uuid: "npm:^8.3.0"
-  checksum: 10c0/6184db18af3b7ec77f6c682962f9404ae7c35c0f2c1256a017e9acba836eaa91b20a90e78fd9196a03153e256dd0453cc1c9f43b36bb218c8ae78b2412be4e79
+  checksum: 10c0/8f61c2172c31cae156c42ada15bd7795ce7ef2b12c33e2c2e4e5802678596c53985f560cb40a93647064f1866d643f75c62699130121aa368ef9b69b87e5f071
   languageName: node
   linkType: hard
 
@@ -434,8 +434,8 @@ __metadata:
   linkType: hard
 
 "@modelcontextprotocol/sdk@npm:^1.23.0":
-  version: 1.24.2
-  resolution: "@modelcontextprotocol/sdk@npm:1.24.2"
+  version: 1.24.3
+  resolution: "@modelcontextprotocol/sdk@npm:1.24.3"
   dependencies:
     ajv: "npm:^8.17.1"
     ajv-formats: "npm:^3.0.1"
@@ -459,7 +459,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/c9a3e555a15282260d847f5959c47fbfa45fba5094775727bb9cd6cee43c834c36c0be7405ca6a105275048786ed9a35df729a33866ae87c5923642fb61184f2
+  checksum: 10c0/91746ddf347d61815c09d2a09d3dc7564576b417f7349c33c672a7e3c69dcd215a52a066b02fcd9eaab1cdeab60cc827f3382b28b2ab68e7fc46d2e1f3824cad
   languageName: node
   linkType: hard
 
@@ -3045,10 +3045,10 @@ __metadata:
   linkType: hard
 
 "jsonwebtoken@npm:^9.0.0":
-  version: 9.0.2
-  resolution: "jsonwebtoken@npm:9.0.2"
+  version: 9.0.3
+  resolution: "jsonwebtoken@npm:9.0.3"
   dependencies:
-    jws: "npm:^3.2.2"
+    jws: "npm:^4.0.1"
     lodash.includes: "npm:^4.3.0"
     lodash.isboolean: "npm:^3.0.3"
     lodash.isinteger: "npm:^4.0.4"
@@ -3058,7 +3058,7 @@ __metadata:
     lodash.once: "npm:^4.0.0"
     ms: "npm:^2.1.1"
     semver: "npm:^7.5.4"
-  checksum: 10c0/d287a29814895e866db2e5a0209ce730cbc158441a0e5a70d5e940eb0d28ab7498c6bf45029cc8b479639bca94056e9a7f254e2cdb92a2f5750c7f358657a131
+  checksum: 10c0/6ca7f1e54886ea3bde7146a5a22b53847c46e25453c7f7307a69818b9a6ad48c390b2e59d5690fcfd03c529b01960060cc4bb0c686991d6edae2285dfd30f4ba
   languageName: node
   linkType: hard
 
@@ -3074,24 +3074,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jwa@npm:^1.4.1":
-  version: 1.4.2
-  resolution: "jwa@npm:1.4.2"
+"jwa@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "jwa@npm:2.0.1"
   dependencies:
     buffer-equal-constant-time: "npm:^1.0.1"
     ecdsa-sig-formatter: "npm:1.0.11"
     safe-buffer: "npm:^5.0.1"
-  checksum: 10c0/210a544a42ca22203e8fc538835205155ba3af6a027753109f9258bdead33086bac3c25295af48ac1981f87f9c5f941bc8f70303670f54ea7dcaafb53993d92c
+  checksum: 10c0/ab3ebc6598e10dc11419d4ed675c9ca714a387481466b10e8a6f3f65d8d9c9237e2826f2505280a739cf4cbcf511cb288eeec22b5c9c63286fc5a2e4f97e78cf
   languageName: node
   linkType: hard
 
-"jws@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "jws@npm:3.2.2"
+"jws@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "jws@npm:4.0.1"
   dependencies:
-    jwa: "npm:^1.4.1"
+    jwa: "npm:^2.0.1"
     safe-buffer: "npm:^5.0.1"
-  checksum: 10c0/e770704533d92df358adad7d1261fdecad4d7b66fa153ba80d047e03ca0f1f73007ce5ed3fbc04d2eba09ba6e7e6e645f351e08e5ab51614df1b0aa4f384dfff
+  checksum: 10c0/6be1ed93023aef570ccc5ea8d162b065840f3ef12f0d1bb3114cade844de7a357d5dc558201d9a65101e70885a6fa56b17462f520e6b0d426195510618a154d0
   languageName: node
   linkType: hard
 
@@ -3332,7 +3332,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mcp-screenshot@workspace:."
   dependencies:
-    "@ai-capabilities-suite/mcp-screenshot": "npm:^1.0.1"
+    "@ai-capabilities-suite/mcp-screenshot": "npm:^1.0.2"
     "@modelcontextprotocol/sdk": "npm:^1.23.0"
     "@types/glob": "npm:^8.1.0"
     "@types/mocha": "npm:^10.0.6"
