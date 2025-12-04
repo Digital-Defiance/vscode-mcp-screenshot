@@ -32,7 +32,7 @@ jobs:
         run: corepack enable
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Install VSCE
         run: npm install -g @vscode/vsce
@@ -63,8 +63,6 @@ jobs:
           git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
-
 
       - name: Publish to VSCode Marketplace
         run: vsce publish --no-dependencies
