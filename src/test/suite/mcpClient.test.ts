@@ -15,10 +15,12 @@ suite("MCP Client Test Suite", () => {
     client = new MCPScreenshotClient(outputChannel);
   });
 
-  teardown(() => {
+  teardown(async function() {
+    this.timeout(5000);
     if (client) {
       client.stop();
     }
+    await new Promise(resolve => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 
@@ -97,10 +99,12 @@ suite("MCP Client - Integration Tests", () => {
     );
   });
 
-  teardown(() => {
+  teardown(async function() {
+    this.timeout(5000);
     if (client) {
       client.stop();
     }
+    await new Promise(resolve => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 
@@ -168,10 +172,12 @@ suite("MCP Client - Method Tests", () => {
     client = new MCPScreenshotClient(outputChannel);
   });
 
-  teardown(() => {
+  teardown(async function() {
+    this.timeout(5000);
     if (client) {
       client.stop();
     }
+    await new Promise(resolve => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 

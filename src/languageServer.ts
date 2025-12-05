@@ -18,10 +18,24 @@ import {
   CompletionItemKind,
   CompletionParams,
   InsertTextFormat,
+  CodeActionParams,
+  CodeAction,
 } from "vscode-languageserver/node";
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { mcpClientAccessor } from "./mcpClientAccessor";
+import { getCodeActions } from "./codeActions";
+import { getSignatureHelp } from "./signatureHelp";
+import { getInlayHints } from "./inlayHints";
+import { getDocumentSymbols } from "./documentSymbols";
+import { getSemanticTokens, tokenTypes, tokenModifiers } from "./semanticTokens";
+import { getDocumentLinks } from "./documentLinks";
+import { getDocumentColors, getColorPresentations } from "./colorProvider";
+import { getFoldingRanges } from "./foldingRanges";
+import { getSelectionRanges } from "./selectionRanges";
+import { getLinkedEditingRanges } from "./linkedEditingRanges";
+import { prepareCallHierarchy, getIncomingCalls, getOutgoingCalls } from "./callHierarchy";
+import { prepareTypeHierarchy, getSupertypes, getSubtypes } from "./typeHierarchy";
 
 // Create a connection for the server using Node's IPC as a transport
 const connection = createConnection(ProposedFeatures.all);
@@ -170,6 +184,23 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
       codeLensProvider: {
         resolveProvider: false,
       },
+      codeActionProvider: true,
+      signatureHelpProvider: {
+        triggerCharacters: ["(", ","],
+      },
+      inlayHintProvider: true,
+      documentSymbolProvider: true,
+      semanticTokensProvider: {
+        legend: { tokenTypes, tokenModifiers },
+        full: true,
+      },
+      documentLinkProvider: {},
+      colorProvider: true,
+      foldingRangeProvider: true,
+      selectionRangeProvider: true,
+      linkedEditingRangeProvider: true,
+      callHierarchyProvider: true,
+      typeHierarchyProvider: true,
       executeCommandProvider: {
         commands: [
           "mcp.screenshot.capture",
@@ -2033,6 +2064,133 @@ function getParameterSpecificCompletions(
 
   return completions;
 }
+
+// Code action provider
+connection.onCodeAction((params: CodeActionParams): CodeAction[] => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+
+  const actions: CodeAction[] = [];
+  for (const diagnostic of params.context.diagnostics) {
+    if (diagnostic.source === "mcp-screenshot") {
+      actions.push(...getCodeActions(document, diagnostic));
+    }
+  }
+
+  return actions;
+});
+
+// Signature help provider
+connection.onSignatureHelp((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return null;
+
+  const text = document.getText();
+  const offset = document.offsetAt(params.position);
+  const before = text.substring(Math.max(0, offset - 100), offset);
+
+  // Find function name
+  const match = before.match(/(capture\w+|list\w+)\s*\([^)]*$/);
+  if (!match) return null;
+
+  const functionName = match[1];
+  const argsText = before.substring(before.lastIndexOf("(") + 1);
+  const activeParameter = (argsText.match(/,/g) || []).length;
+
+  return getSignatureHelp(functionName, activeParameter);
+});
+
+// Inlay hint provider
+connection.languages.inlayHint.on((params: any) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getInlayHints(document);
+});
+
+// Document symbol provider
+connection.onDocumentSymbol((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getDocumentSymbols(document);
+});
+
+// Semantic tokens provider
+connection.languages.semanticTokens.on((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return { data: [] };
+  return getSemanticTokens(document);
+});
+
+// Document link provider
+connection.onDocumentLinks((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getDocumentLinks(document);
+});
+
+// Color provider
+connection.onDocumentColor((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getDocumentColors(document);
+});
+
+connection.onColorPresentation((params) => {
+  return getColorPresentations(params.color);
+});
+
+// Folding range provider
+connection.onFoldingRanges((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getFoldingRanges(document);
+});
+
+// Selection range provider
+connection.onSelectionRanges((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getSelectionRanges(document, params.positions);
+});
+
+// Linked editing range provider
+connection.languages.onLinkedEditingRange((params: any) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return null;
+  return getLinkedEditingRanges(document, params.position);
+});
+
+// Call hierarchy provider
+connection.languages.callHierarchy.onPrepare((params: any) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return null;
+  return prepareCallHierarchy(document, params.position);
+});
+
+connection.languages.callHierarchy.onIncomingCalls((params: any) => {
+  return getIncomingCalls(params.item);
+});
+
+connection.languages.callHierarchy.onOutgoingCalls((params: any) => {
+  return getOutgoingCalls(params.item);
+});
+
+// Type hierarchy provider
+connection.languages.typeHierarchy.onPrepare((params: any) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return null;
+  return prepareTypeHierarchy(document, params.position);
+});
+
+connection.languages.typeHierarchy.onSupertypes((params: any) => {
+  return getSupertypes(params.item);
+});
+
+connection.languages.typeHierarchy.onSubtypes((params: any) => {
+  return getSubtypes(params.item);
+});
 
 // Make the text document manager listen on the connection
 documents.listen(connection);

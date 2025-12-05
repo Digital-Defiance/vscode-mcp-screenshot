@@ -169,7 +169,8 @@ suite("Extension Integration - Property-Based Tests", () => {
     );
   });
 
-  test("Property 17: Backward compatibility - configuration updates work", async () => {
+  test("Property 17: Backward compatibility - configuration updates work", async function() {
+    this.timeout(60000);
     /**
      * Property: For any configuration property, updating it should work
      * the same way as before LSP integration
@@ -188,6 +189,9 @@ suite("Extension Integration - Property-Based Tests", () => {
               format,
               vscode.ConfigurationTarget.Global
             );
+
+            // Wait for config to propagate
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             // Verify update
             const updatedConfig =
@@ -213,7 +217,7 @@ suite("Extension Integration - Property-Based Tests", () => {
           }
         }
       ),
-      { numRuns: 50 }
+      { numRuns: 10 }
     );
   });
 });

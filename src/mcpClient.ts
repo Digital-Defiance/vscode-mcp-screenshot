@@ -42,7 +42,11 @@ export class MCPScreenshotClient {
     });
 
     this.process.on("exit", (code) => {
-      this.outputChannel.appendLine(`Process exited with code ${code}`);
+      try {
+        this.outputChannel.appendLine(`Process exited with code ${code}`);
+      } catch (e) {
+        // Channel may be disposed
+      }
     });
 
     // Give the server a moment to start
