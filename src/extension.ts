@@ -17,6 +17,31 @@ export async function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("MCP Screenshot");
   outputChannel.appendLine("MCP Screenshot extension activating...");
 
+  // Register MCP server definition provider for GitHub Copilot
+  const mcpProviderId = 'mcp-screenshot.mcp-provider';
+  const mcpProvider: vscode.McpServerDefinitionProvider = {
+    provideMcpServerDefinitions: async (token) => {
+      const config = vscode.workspace.getConfiguration('mcpScreenshot');
+      const command = config.get<string>('serverCommand', 'npx');
+      const args = config.get<string[]>('serverArgs', ['-y', '@ai-capabilities-suite/mcp-screenshot']);
+      
+      return [
+        new vscode.McpStdioServerDefinition(
+          'MCP Screenshot',
+          command,
+          args
+        )
+      ];
+    },
+    resolveMcpServerDefinition: async (server, token) => {
+      return server;
+    }
+  };
+  
+  context.subscriptions.push(
+    vscode.lm.registerMcpServerDefinitionProvider(mcpProviderId, mcpProvider)
+  );
+
   // Initialize MCP client
   const config = vscode.workspace.getConfiguration("mcpScreenshot");
   const autoStart = config.get<boolean>("autoStart", true);

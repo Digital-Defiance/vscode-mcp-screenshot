@@ -2,7 +2,7 @@
   "name": "mcp-screenshot",
   "displayName": "MCP ACS Screenshot",
   "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance. Part of the Digital Defiance AI Capabilities Suite.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "publisher": "DigitalDefiance",
   "packageManager": "yarn@4.12.0",
   "icon": "images/icon.png",
@@ -34,6 +34,12 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "mcp-screenshot.mcp-provider",
+        "label": "MCP Screenshot"
+      }
+    ],
     "commands": [
       {
         "command": "mcp-screenshot.captureFullScreen",
