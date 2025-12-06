@@ -2,13 +2,16 @@
   "name": "mcp-screenshot",
   "displayName": "MCP ACS Screenshot",
   "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance. Part of the Digital Defiance AI Capabilities Suite.",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "publisher": "DigitalDefiance",
   "packageManager": "yarn@4.12.0",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.96.0"
   },
+  "enabledApiProposals": [
+    "mcp"
+  ],
   "categories": [
     "Other",
     "Visualization",
@@ -26,6 +29,7 @@
     "privacy"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:javascript",
     "onLanguage:typescript",
     "onLanguage:javascriptreact",
@@ -40,7 +44,105 @@
         "label": "MCP Screenshot"
       }
     ],
+    "chatParticipants": [
+      {
+        "id": "mcp-screenshot.participant",
+        "name": "screenshot",
+        "description": "MCP Screenshot - Cross-platform screenshot capture with PII masking",
+        "isSticky": true
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "screenshot_capture_full",
+        "displayName": "Capture Full Screen",
+        "modelDescription": "Capture full screen screenshot",
+        "toolReferenceName": "captureFullScreen",
+        "canBeReferencedInPrompt": true,
+        "tags": ["screenshot", "mcp"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": ["png", "jpeg", "webp", "bmp"],
+              "description": "Image format"
+            },
+            "quality": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Quality for lossy formats"
+            }
+          }
+        }
+      },
+      {
+        "name": "screenshot_capture_window",
+        "displayName": "Capture Window",
+        "modelDescription": "Capture specific window screenshot",
+        "toolReferenceName": "captureWindow",
+        "canBeReferencedInPrompt": true,
+        "tags": ["screenshot", "mcp"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "windowTitle": {
+              "type": "string",
+              "description": "Window title to capture"
+            }
+          }
+        }
+      },
+      {
+        "name": "screenshot_capture_region",
+        "displayName": "Capture Region",
+        "modelDescription": "Capture a rectangular region of the screen",
+        "toolReferenceName": "captureRegion",
+        "canBeReferencedInPrompt": true,
+        "tags": ["screenshot", "mcp"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number", "description": "X coordinate" },
+            "y": { "type": "number", "description": "Y coordinate" },
+            "width": { "type": "number", "description": "Width" },
+            "height": { "type": "number", "description": "Height" }
+          },
+          "required": ["x", "y", "width", "height"]
+        }
+      },
+      {
+        "name": "screenshot_list_displays",
+        "displayName": "List Displays",
+        "modelDescription": "List all connected displays",
+        "toolReferenceName": "listDisplays",
+        "canBeReferencedInPrompt": true,
+        "tags": ["screenshot", "mcp"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "screenshot_list_windows",
+        "displayName": "List Windows",
+        "modelDescription": "List all visible windows",
+        "toolReferenceName": "listWindows",
+        "canBeReferencedInPrompt": true,
+        "tags": ["screenshot", "mcp"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
     "commands": [
+      {
+        "command": "mcp-screenshot.configureMcp",
+        "title": "MCP Screenshot: Add to Copilot MCP Servers",
+        "icon": "$(add)"
+      },
       {
         "command": "mcp-screenshot.captureFullScreen",
         "title": "MCP Screenshot: Capture Full Screen",
@@ -141,6 +243,43 @@
         }
       }
     },
+    "walkthroughs": [
+      {
+        "id": "mcp-screenshot.walkthrough",
+        "title": "Get Started with MCP Screenshot",
+        "description": "Learn how to capture screenshots with AI assistance",
+        "steps": [
+          {
+            "id": "install",
+            "title": "Extension Installed",
+            "description": "MCP Screenshot is now active.\n[Open Settings](command:workbench.action.openSettings?%5B%22mcpScreenshot%22%5D)",
+            "media": {
+              "markdown": "README.md"
+            }
+          },
+          {
+            "id": "copilot",
+            "title": "Use with Copilot",
+            "description": "Ask Copilot to capture screenshots:\n- `@screenshot capture full screen`\n- `@screenshot list windows`\n[Try it now](command:workbench.action.chat.open)",
+            "media": {
+              "markdown": "README.md"
+            }
+          }
+        ]
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "mcp-screenshot.captureFullScreen",
+        "key": "ctrl+shift+s ctrl+shift+f",
+        "mac": "cmd+shift+s cmd+shift+f"
+      },
+      {
+        "command": "mcp-screenshot.captureWindow",
+        "key": "ctrl+shift+s ctrl+shift+w",
+        "mac": "cmd+shift+s cmd+shift+w"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {

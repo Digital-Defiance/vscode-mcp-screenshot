@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import * as fs from "fs";
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -12,35 +13,262 @@ import { mcpClientAccessor } from "./mcpClientAccessor";
 let mcpClient: MCPScreenshotClient | undefined;
 let languageClient: LanguageClient | undefined;
 let outputChannel: vscode.OutputChannel;
+let statusBarItem: vscode.StatusBarItem | undefined;
+
+/**
+ * Add this MCP server to the workspace mcp.json configuration
+ */
+async function configureMcpServer(): Promise<void> {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    const choice = await vscode.window.showWarningMessage(
+      "No workspace folder open. Would you like to add the MCP server to your user settings instead?",
+      "Add to User Settings",
+      "Cancel"
+    );
+    if (choice === "Add to User Settings") {
+      await vscode.commands.executeCommand("workbench.action.openSettingsJson");
+      vscode.window.showInformationMessage(
+        "Add the MCP server configuration manually. See the extension README for details."
+      );
+    }
+    return;
+  }
+
+  const workspaceFolder = workspaceFolders[0];
+  const vscodePath = path.join(workspaceFolder.uri.fsPath, ".vscode");
+  const mcpJsonPath = path.join(vscodePath, "mcp.json");
+
+  // Ensure .vscode directory exists
+  if (!fs.existsSync(vscodePath)) {
+    fs.mkdirSync(vscodePath, { recursive: true });
+  }
+
+  // Read existing mcp.json or create new one
+  let mcpConfig: { servers?: Record<string, any> } = { servers: {} };
+  if (fs.existsSync(mcpJsonPath)) {
+    try {
+      const content = fs.readFileSync(mcpJsonPath, "utf8");
+      mcpConfig = JSON.parse(content);
+      if (!mcpConfig.servers) {
+        mcpConfig.servers = {};
+      }
+    } catch (error) {
+      outputChannel.appendLine(`Error reading mcp.json: ${error}`);
+    }
+  }
+
+  // Add our server configuration
+  const serverName = "mcp-screenshot";
+  if (mcpConfig.servers && mcpConfig.servers[serverName]) {
+    const choice = await vscode.window.showWarningMessage(
+      `MCP server "${serverName}" is already configured. Do you want to replace it?`,
+      "Replace",
+      "Cancel"
+    );
+    if (choice !== "Replace") {
+      return;
+    }
+  }
+
+  mcpConfig.servers = mcpConfig.servers || {};
+  mcpConfig.servers[serverName] = {
+    type: "stdio",
+    command: "npx",
+    args: ["-y", "@ai-capabilities-suite/mcp-screenshot"],
+  };
+
+  // Write the updated configuration
+  fs.writeFileSync(mcpJsonPath, JSON.stringify(mcpConfig, null, 2));
+
+  // Open the file to show the user
+  const doc = await vscode.workspace.openTextDocument(mcpJsonPath);
+  await vscode.window.showTextDocument(doc);
+
+  vscode.window.showInformationMessage(
+    `MCP Screenshot server added to ${mcpJsonPath}. Restart the MCP server to use it with Copilot.`
+  );
+}
 
 export async function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("MCP Screenshot");
   outputChannel.appendLine("MCP Screenshot extension activating...");
 
-  // Register MCP server definition provider for GitHub Copilot
-  const mcpProviderId = 'mcp-screenshot.mcp-provider';
-  const mcpProvider: vscode.McpServerDefinitionProvider = {
-    provideMcpServerDefinitions: async (token) => {
-      const config = vscode.workspace.getConfiguration('mcpScreenshot');
-      const command = config.get<string>('serverCommand', 'npx');
-      const args = config.get<string[]>('serverArgs', ['-y', '@ai-capabilities-suite/mcp-screenshot']);
-      
-      return [
-        new vscode.McpStdioServerDefinition(
-          'MCP Screenshot',
-          command,
-          args
-        )
-      ];
-    },
-    resolveMcpServerDefinition: async (server, token) => {
-      return server;
+  // Register MCP server definition provider (for future MCP protocol support)
+  try {
+    const mcpProviderId = "mcp-screenshot.mcp-provider";
+    const mcpProvider: vscode.McpServerDefinitionProvider = {
+      provideMcpServerDefinitions: async (token) => {
+        const config = vscode.workspace.getConfiguration("mcpScreenshot");
+        const command = config.get<string>("serverCommand", "npx");
+        const args = config.get<string[]>("serverArgs", [
+          "-y",
+          "@ai-capabilities-suite/mcp-screenshot",
+        ]);
+
+        return [
+          new vscode.McpStdioServerDefinition("MCP Screenshot", command, args),
+        ];
+      },
+      resolveMcpServerDefinition: async (server, token) => {
+        return server;
+      },
+    };
+
+    context.subscriptions.push(
+      vscode.lm.registerMcpServerDefinitionProvider(mcpProviderId, mcpProvider)
+    );
+    outputChannel.appendLine("MCP server definition provider registered");
+  } catch (error) {
+    outputChannel.appendLine(
+      `MCP provider registration skipped (API not available): ${error}`
+    );
+  }
+
+  // Register chat participant for Copilot integration
+  const participant = vscode.chat.createChatParticipant(
+    "mcp-screenshot.participant",
+    async (request, context, stream, token) => {
+      if (!mcpClient) {
+        stream.markdown(
+          "MCP Screenshot server is not running. Please start it first."
+        );
+        return;
+      }
+
+      const prompt = request.prompt;
+      stream.markdown(`Processing: ${prompt}\n\n`);
+
+      if (prompt.includes("full") || prompt.includes("screen")) {
+        stream.markdown("Capturing full screen...");
+        await captureFullScreen();
+        stream.markdown("Screenshot captured successfully!");
+      } else if (prompt.includes("window")) {
+        stream.markdown("Capturing window...");
+      } else if (prompt.includes("region")) {
+        stream.markdown("Capturing region...");
+      } else {
+        stream.markdown(
+          "Available commands:\n- Capture full screen\n- Capture window\n- Capture region\n- List displays"
+        );
+      }
     }
-  };
-  
-  context.subscriptions.push(
-    vscode.lm.registerMcpServerDefinitionProvider(mcpProviderId, mcpProvider)
   );
+
+  context.subscriptions.push(participant);
+
+  // Create status bar item
+  statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    100
+  );
+  statusBarItem.text = "$(device-camera) MCP Screenshot";
+  statusBarItem.tooltip = "MCP Screenshot - Available to GitHub Copilot";
+  statusBarItem.command = "mcp-screenshot.captureFullScreen";
+  statusBarItem.show();
+  context.subscriptions.push(statusBarItem);
+
+  // Register language model tools
+  try {
+    const tools = [
+      {
+        name: "screenshot_capture_full",
+        tool: {
+          description: "Capture full screen screenshot",
+          inputSchema: {
+            type: "object",
+            properties: {
+              format: {
+                type: "string",
+                enum: ["png", "jpeg", "webp", "bmp"],
+                description: "Image format",
+              },
+              quality: {
+                type: "number",
+                minimum: 1,
+                maximum: 100,
+                description: "Quality for lossy formats",
+              },
+            },
+          },
+          invoke: async (
+            options: vscode.LanguageModelToolInvocationOptions<any>,
+            token: vscode.CancellationToken
+          ) => {
+            await captureFullScreen();
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart("Screenshot captured"),
+            ]);
+          },
+        },
+      },
+      {
+        name: "screenshot_capture_window",
+        tool: {
+          description: "Capture specific window screenshot",
+          inputSchema: {
+            type: "object",
+            properties: {
+              windowTitle: {
+                type: "string",
+                description: "Window title to capture",
+              },
+            },
+          },
+          invoke: async (
+            options: vscode.LanguageModelToolInvocationOptions<any>,
+            token: vscode.CancellationToken
+          ) => {
+            await captureWindow();
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart("Window captured"),
+            ]);
+          },
+        },
+      },
+      {
+        name: "screenshot_list_displays",
+        tool: {
+          description: "List all connected displays",
+          inputSchema: { type: "object", properties: {} },
+          invoke: async (
+            options: vscode.LanguageModelToolInvocationOptions<any>,
+            token: vscode.CancellationToken
+          ) => {
+            await listDisplays();
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart("Displays listed"),
+            ]);
+          },
+        },
+      },
+      {
+        name: "screenshot_list_windows",
+        tool: {
+          description: "List all visible windows",
+          inputSchema: { type: "object", properties: {} },
+          invoke: async (
+            options: vscode.LanguageModelToolInvocationOptions<any>,
+            token: vscode.CancellationToken
+          ) => {
+            await listWindows();
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart("Windows listed"),
+            ]);
+          },
+        },
+      },
+    ];
+
+    for (const { name, tool } of tools) {
+      context.subscriptions.push(vscode.lm.registerTool(name, tool));
+    }
+    outputChannel.appendLine(`Registered ${tools.length} language model tools`);
+  } catch (error) {
+    outputChannel.appendLine(
+      `Tool registration skipped (API not available): ${error}`
+    );
+  }
 
   // Initialize MCP client
   const config = vscode.workspace.getConfiguration("mcpScreenshot");
@@ -63,6 +291,12 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   // Register commands
+  context.subscriptions.push(
+    vscode.commands.registerCommand("mcp-screenshot.configureMcp", async () => {
+      await configureMcpServer();
+    })
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "mcp-screenshot.captureFullScreen",
@@ -207,6 +441,10 @@ async function startLanguageServer(
 }
 
 export async function deactivate() {
+  if (statusBarItem) {
+    statusBarItem.dispose();
+  }
+
   // Stop language server
   if (languageClient) {
     try {
