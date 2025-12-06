@@ -2,7 +2,7 @@
   "name": "mcp-screenshot",
   "displayName": "MCP ACS Screenshot",
   "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance. Part of the Digital Defiance AI Capabilities Suite.",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "publisher": "DigitalDefiance",
   "packageManager": "yarn@4.12.0",
   "icon": "images/icon.png",
@@ -60,13 +60,21 @@
         "modelDescription": "Capture full screen screenshot",
         "toolReferenceName": "captureFullScreen",
         "canBeReferencedInPrompt": true,
-        "tags": ["screenshot", "mcp"],
+        "tags": [
+          "screenshot",
+          "mcp"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
             "format": {
               "type": "string",
-              "enum": ["png", "jpeg", "webp", "bmp"],
+              "enum": [
+                "png",
+                "jpeg",
+                "webp",
+                "bmp"
+              ],
               "description": "Image format"
             },
             "quality": {
@@ -84,7 +92,10 @@
         "modelDescription": "Capture specific window screenshot",
         "toolReferenceName": "captureWindow",
         "canBeReferencedInPrompt": true,
-        "tags": ["screenshot", "mcp"],
+        "tags": [
+          "screenshot",
+          "mcp"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -101,16 +112,36 @@
         "modelDescription": "Capture a rectangular region of the screen",
         "toolReferenceName": "captureRegion",
         "canBeReferencedInPrompt": true,
-        "tags": ["screenshot", "mcp"],
+        "tags": [
+          "screenshot",
+          "mcp"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "x": { "type": "number", "description": "X coordinate" },
-            "y": { "type": "number", "description": "Y coordinate" },
-            "width": { "type": "number", "description": "Width" },
-            "height": { "type": "number", "description": "Height" }
+            "x": {
+              "type": "number",
+              "description": "X coordinate"
+            },
+            "y": {
+              "type": "number",
+              "description": "Y coordinate"
+            },
+            "width": {
+              "type": "number",
+              "description": "Width"
+            },
+            "height": {
+              "type": "number",
+              "description": "Height"
+            }
           },
-          "required": ["x", "y", "width", "height"]
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ]
         }
       },
       {
@@ -119,7 +150,10 @@
         "modelDescription": "List all connected displays",
         "toolReferenceName": "listDisplays",
         "canBeReferencedInPrompt": true,
-        "tags": ["screenshot", "mcp"],
+        "tags": [
+          "screenshot",
+          "mcp"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {}
@@ -131,7 +165,10 @@
         "modelDescription": "List all visible windows",
         "toolReferenceName": "listWindows",
         "canBeReferencedInPrompt": true,
-        "tags": ["screenshot", "mcp"],
+        "tags": [
+          "screenshot",
+          "mcp"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {}
