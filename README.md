@@ -8,7 +8,7 @@ This isn't just another screenshot tool—it's the bridge that gives AI agents *
 
 This package is now maintained in its own repository: **[https://github.com/Digital-Defiance/vscode-mcp-screenshot](https://github.com/Digital-Defiance/vscode-mcp-screenshot)**
 
-This repository is part of the [AI Capabilitites Suite](https://github.com/Digital-Defiance/ai-capabilitites-suite) on GitHub.
+This repository is part of the [AI Capabilitites Suite](https://github.com/Digital-Defiance/ai-capabilities-suite) on GitHub.
 
 ## 🤔 Why Do AI Agents Need to See Your Screen?
 
