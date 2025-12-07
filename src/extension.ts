@@ -160,11 +160,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // Create status bar item
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
-    100
+    99
   );
-  statusBarItem.text = "$(device-camera) MCP Screenshot";
-  statusBarItem.tooltip = "MCP Screenshot - Available to GitHub Copilot";
+  statusBarItem.text = "$(device-camera) Screenshot";
+  statusBarItem.tooltip = "MCP Screenshot - Click to capture";
   statusBarItem.command = "mcp-screenshot.captureFullScreen";
+  statusBarItem.backgroundColor = undefined;
   statusBarItem.show();
   context.subscriptions.push(statusBarItem);
 
