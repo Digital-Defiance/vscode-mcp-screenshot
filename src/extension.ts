@@ -2,6 +2,10 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import {
+  registerExtension,
+  unregisterExtension,
+} from "@ai-capabilities-suite/vscode-shared-status-bar";
+import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
@@ -12,8 +16,7 @@ import { mcpClientAccessor } from "./mcpClientAccessor";
 
 let mcpClient: MCPScreenshotClient | undefined;
 let languageClient: LanguageClient | undefined;
-let outputChannel: vscode.OutputChannel;
-let statusBarItem: vscode.StatusBarItem | undefined;
+let outputChannel: vscode.LogOutputChannel;
 
 /**
  * Add this MCP server to the workspace mcp.json configuration
@@ -91,7 +94,9 @@ async function configureMcpServer(): Promise<void> {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  outputChannel = vscode.window.createOutputChannel("MCP Screenshot");
+  outputChannel = vscode.window.createOutputChannel("MCP Screenshot", {
+    log: true,
+  });
   outputChannel.appendLine("MCP Screenshot extension activating...");
 
   // Register MCP server definition provider (for future MCP protocol support)
@@ -156,18 +161,6 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(participant);
-
-  // Create status bar item
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    99
-  );
-  statusBarItem.text = "$(device-camera) Screenshot";
-  statusBarItem.tooltip = "MCP Screenshot - Click to capture";
-  statusBarItem.command = "mcp-screenshot.captureFullScreen";
-  statusBarItem.backgroundColor = undefined;
-  statusBarItem.show();
-  context.subscriptions.push(statusBarItem);
 
   // Register language model tools
   try {
@@ -361,6 +354,12 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   outputChannel.appendLine("MCP Screenshot extension activated");
+
+  // Register status bar
+  registerExtension("mcp-screenshot");
+  context.subscriptions.push({
+    dispose: () => unregisterExtension("mcp-screenshot"),
+  });
 }
 
 /**
@@ -442,9 +441,7 @@ async function startLanguageServer(
 }
 
 export async function deactivate() {
-  if (statusBarItem) {
-    statusBarItem.dispose();
-  }
+  unregisterExtension("mcp-screenshot");
 
   // Stop language server
   if (languageClient) {
@@ -456,7 +453,6 @@ export async function deactivate() {
     }
   }
 
-  // Clear MCP client reference
   mcpClientAccessor.clearClient();
 
   // Stop MCP client

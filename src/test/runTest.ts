@@ -13,10 +13,11 @@ async function main() {
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: [
-        "--disable-extensions", // Disable other extensions
-        "--disable-gpu", // Disable GPU for headless testing
-      ],
+      launchArgs: ["--disable-extensions"],
+      extensionTestsEnv: {
+        VSCODE_TEST_MODE: "true",
+        NODE_ENV: "test",
+      },
     });
   } catch (err) {
     console.error("Failed to run tests:", err);
