@@ -4,6 +4,7 @@ import * as fs from "fs";
 import {
   registerExtension,
   unregisterExtension,
+  setOutputChannel,
 } from "@ai-capabilities-suite/vscode-shared-status-bar";
 import {
   LanguageClient,
@@ -355,8 +356,33 @@ export async function activate(context: vscode.ExtensionContext) {
 
   outputChannel.appendLine("MCP Screenshot extension activated");
 
-  // Register status bar
-  registerExtension("mcp-screenshot");
+  // Register with shared status bar
+  await registerExtension("mcp-screenshot", {
+    displayName: "MCP Screenshot",
+    status: "ok",
+    settingsQuery: "mcpScreenshot",
+    actions: [
+      {
+        label: "Capture Full Screen",
+        command: "mcp-screenshot.captureFullScreen",
+        description: "Take a screenshot of the entire screen",
+      },
+      {
+        label: "Capture Window",
+        command: "mcp-screenshot.captureWindow",
+        description: "Select a window to capture",
+      },
+      {
+        label: "Capture Region",
+        command: "mcp-screenshot.captureRegion",
+        description: "Select a region to capture",
+      },
+    ],
+  });
+
+  // Configure shared status bar output channel (idempotent - only first call takes effect)
+  setOutputChannel(outputChannel);
+
   context.subscriptions.push({
     dispose: () => unregisterExtension("mcp-screenshot"),
   });
@@ -441,7 +467,7 @@ async function startLanguageServer(
 }
 
 export async function deactivate() {
-  unregisterExtension("mcp-screenshot");
+  await unregisterExtension("mcp-screenshot");
 
   // Stop language server
   if (languageClient) {

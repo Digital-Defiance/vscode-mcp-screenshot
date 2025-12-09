@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { spawn, ChildProcess } from "child_process";
+import * as path from "path";
 
 export class MCPScreenshotClient {
   private process: ChildProcess | undefined;
@@ -11,11 +12,43 @@ export class MCPScreenshotClient {
 
   async start(): Promise<void> {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
-    const serverCommand = config.get<string>("serverCommand", "npx");
-    const serverArgs = config.get<string[]>("serverArgs", [
+    let serverCommand = config.get<string>("serverCommand", "npx");
+    let serverArgs = config.get<string[]>("serverArgs", [
       "-y",
       "@ai-capabilities-suite/mcp-screenshot",
     ]);
+
+    if (process.env.VSCODE_TEST_MODE === "true") {
+      try {
+        // In test mode, use the local build
+        // We need to find the extension path to resolve the relative path to the server
+        let extensionPath = "";
+        const extension = vscode.extensions.getExtension(
+          "DigitalDefiance.mcp-screenshot"
+        );
+        if (extension) {
+          extensionPath = extension.extensionPath;
+        }
+
+        if (extensionPath) {
+          serverCommand = "node";
+          const serverScript = path.resolve(
+            extensionPath,
+            "../mcp-screenshot/dist/cli.js"
+          );
+          serverArgs = [serverScript];
+          this.outputChannel.appendLine(
+            `Test mode: Using local server at ${serverScript}`
+          );
+        } else {
+          this.outputChannel.appendLine(
+            "Test mode: Could not find extension path, falling back to configuration"
+          );
+        }
+      } catch (error) {
+        this.outputChannel.appendLine(`Test mode error: ${error}`);
+      }
+    }
 
     this.outputChannel.appendLine(
       `Starting MCP Screenshot server: ${serverCommand} ${serverArgs.join(" ")}`
