@@ -5,9 +5,9 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@ai-capabilities-suite/mcp-screenshot@npm:^1.5.20":
-  version: 1.5.20
-  resolution: "@ai-capabilities-suite/mcp-screenshot@npm:1.5.20"
+"@ai-capabilities-suite/mcp-screenshot@npm:^1.5.21":
+  version: 1.5.21
+  resolution: "@ai-capabilities-suite/mcp-screenshot@npm:1.5.21"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.23.0"
     active-win: "npm:^8.1.0"
@@ -19,7 +19,7 @@ __metadata:
     zod: "npm:^4.1.13"
   bin:
     mcp-screenshot: dist/cli.js
-  checksum: 10c0/4f8c5f2dcf2c9a0c65c97302b5c7cf5ca92b8aa6e73204fbdd5939881cbecb1812af772aa1247051d1edcfd92adea7b7f35d4d478d881f3102c4a8d9ff5df258
+  checksum: 10c0/3d07dcd32f8a4fac7c1336160c9480b693d551c61612981e8ebaf7b525eb257b0cb2dbf65738e112fdb8a610a0f7df67116088bdf0578096dcda6429688bea37
   conditions: (os=darwin | os=linux | os=win32)
   languageName: node
   linkType: hard
@@ -3612,7 +3612,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mcp-screenshot@workspace:."
   dependencies:
-    "@ai-capabilities-suite/mcp-screenshot": "npm:^1.5.20"
+    "@ai-capabilities-suite/mcp-screenshot": "npm:^1.5.21"
     "@ai-capabilities-suite/vscode-shared-status-bar": "npm:^1.0.21"
     "@modelcontextprotocol/sdk": "npm:^1.23.0"
     "@types/glob": "npm:^8.1.0"
