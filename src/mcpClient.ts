@@ -13,6 +13,9 @@ export class MCPScreenshotClient {
   async start(): Promise<void> {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
     let serverCommand = config.get<string>("serverCommand", "npx");
+    if (serverCommand === "npx" && process.platform === "win32") {
+      serverCommand = "npx.cmd";
+    }
     let serverArgs = config.get<string[]>("serverArgs", [
       "-y",
       "@ai-capabilities-suite/mcp-screenshot",
