@@ -28,14 +28,26 @@ import { getCodeActions } from "./codeActions";
 import { getSignatureHelp } from "./signatureHelp";
 import { getInlayHints } from "./inlayHints";
 import { getDocumentSymbols } from "./documentSymbols";
-import { getSemanticTokens, tokenTypes, tokenModifiers } from "./semanticTokens";
+import {
+  getSemanticTokens,
+  tokenTypes,
+  tokenModifiers,
+} from "./semanticTokens";
 import { getDocumentLinks } from "./documentLinks";
 import { getDocumentColors, getColorPresentations } from "./colorProvider";
 import { getFoldingRanges } from "./foldingRanges";
 import { getSelectionRanges } from "./selectionRanges";
 import { getLinkedEditingRanges } from "./linkedEditingRanges";
-import { prepareCallHierarchy, getIncomingCalls, getOutgoingCalls } from "./callHierarchy";
-import { prepareTypeHierarchy, getSupertypes, getSubtypes } from "./typeHierarchy";
+import {
+  prepareCallHierarchy,
+  getIncomingCalls,
+  getOutgoingCalls,
+} from "./callHierarchy";
+import {
+  prepareTypeHierarchy,
+  getSupertypes,
+  getSubtypes,
+} from "./typeHierarchy";
 
 // Create a connection for the server using Node's IPC as a transport
 const connection = createConnection(ProposedFeatures.all);
@@ -175,7 +187,7 @@ function isSupportedFileType(fileType: FileType): boolean {
 
 // Initialize the language server
 connection.onInitialize((params: InitializeParams): InitializeResult => {
-  connection.console.log("MCP Screenshot Language Server initializing...");
+  connection.console.log("MCP ACS Screenshot Language Server initializing...");
 
   const result: InitializeResult = {
     capabilities: {
@@ -220,7 +232,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
 });
 
 connection.onInitialized(() => {
-  connection.console.log("MCP Screenshot Language Server initialized");
+  connection.console.log("MCP ACS Screenshot Language Server initialized");
 });
 
 // Listen for document open events
@@ -1151,7 +1163,7 @@ async function getIdentifierHover(
     return {
       contents: {
         kind: MarkupKind.Markdown,
-        value: `### ${word}\n\nMCP Screenshot client not available. Start the extension to get resource information.`,
+        value: `### ${word}\n\nMCP ACS Screenshot client not available. Start the extension to get resource information.`,
       },
     };
   }
@@ -1556,7 +1568,7 @@ connection.onExecuteCommand(
     if (!client) {
       const error = {
         code: "CLIENT_UNAVAILABLE",
-        message: "MCP Screenshot client is not available",
+        message: "MCP ACS Screenshot client is not available",
         details: {
           command: params.command,
         },

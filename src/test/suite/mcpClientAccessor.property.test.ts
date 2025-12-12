@@ -8,7 +8,7 @@ import { MCPScreenshotClient } from "../../mcpClient";
  * Feature: mcp-screenshot-lsp, Property 15: MCP client delegation
  *
  * Property: For any LSP command execution, it should delegate to the
- * existing MCP Screenshot client's methods
+ * existing MCP ACS Screenshot client's methods
  *
  * Validates: Requirements 6.3
  */

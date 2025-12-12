@@ -54,7 +54,9 @@ export class MCPScreenshotClient {
     }
 
     this.outputChannel.appendLine(
-      `Starting MCP Screenshot server: ${serverCommand} ${serverArgs.join(" ")}`
+      `Starting MCP ACS Screenshot server: ${serverCommand} ${serverArgs.join(
+        " "
+      )}`
     );
 
     this.process = spawn(serverCommand, serverArgs, {

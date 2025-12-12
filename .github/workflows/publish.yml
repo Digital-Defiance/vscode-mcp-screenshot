@@ -73,9 +73,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ env.NEW_VERSION }}"
-          name: "VSCode MCP Screenshot v${{ env.NEW_VERSION }}"
+          name: "VSCode MCP ACS Screenshot v${{ env.NEW_VERSION }}"
           body: |
-            ## VSCode MCP Screenshot Extension v${{ env.NEW_VERSION }}
+            ## VSCode MCP ACS Screenshot Extension v${{ env.NEW_VERSION }}
 
             ${{ env.CHANGELOG }}
 

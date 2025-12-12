@@ -1,6 +1,6 @@
-# MCP Screenshot LSP Examples
+# MCP ACS Screenshot LSP Examples
 
-This document provides comprehensive examples of using the Language Server Protocol (LSP) features in the MCP Screenshot extension.
+This document provides comprehensive examples of using the Language Server Protocol (LSP) features in the MCP ACS Screenshot extension.
 
 ## Table of Contents
 
@@ -674,7 +674,7 @@ Use diagnostics to ensure your screenshot configurations are always valid.
 ### LSP Features Not Working
 
 1. Check file type - LSP only works in supported file types
-2. Check extension activation - Look for "MCP Screenshot" in output panel
+2. Check extension activation - Look for "MCP ACS Screenshot" in output panel
 3. Check language server status - Look for language server logs
 4. Restart VS Code if features stop working
 
@@ -699,6 +699,6 @@ Use diagnostics to ensure your screenshot configurations are always valid.
 ## Additional Resources
 
 - [README.md](./README.md) - Main extension documentation
-- [API Documentation](./API.md) - MCP Screenshot API reference
+- [API Documentation](./API.md) - MCP ACS Screenshot API reference
 - [Configuration Guide](./CONFIGURATION.md) - Extension configuration options
 - [GitHub Issues](https://github.com/digital-defiance/ai-capabilities-suite/issues) - Report issues or request features

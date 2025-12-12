@@ -2,7 +2,7 @@
   "name": "mcp-screenshot",
   "displayName": "MCP ACS Screenshot",
   "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance. Part of the Digital Defiance AI Capabilities Suite.",
-  "version": "1.5.21",
+  "version": "1.5.23",
   "publisher": "DigitalDefiance",
   "packageManager": "yarn@4.12.0",
   "icon": "images/icon.png",
@@ -36,17 +36,11 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "mcpServerDefinitionProviders": [
-      {
-        "id": "mcp-screenshot.mcp-provider",
-        "label": "MCP ACS Screenshot"
-      }
-    ],
     "chatParticipants": [
       {
         "id": "mcp-screenshot.participant",
         "name": "screenshot",
-        "description": "MCP Screenshot - Cross-platform screenshot capture with PII masking",
+        "description": "MCP ACS Screenshot - Cross-platform screenshot capture with PII masking",
         "isSticky": true
       }
     ],
@@ -174,48 +168,43 @@
     ],
     "commands": [
       {
-        "command": "mcp-screenshot.configureMcp",
-        "title": "MCP Screenshot: Add to Copilot MCP Servers",
-        "icon": "$(add)"
-      },
-      {
         "command": "mcp-screenshot.captureFullScreen",
-        "title": "MCP Screenshot: Capture Full Screen",
+        "title": "MCP ACS Screenshot: Capture Full Screen",
         "icon": "$(device-camera)"
       },
       {
         "command": "mcp-screenshot.captureWindow",
-        "title": "MCP Screenshot: Capture Window",
+        "title": "MCP ACS Screenshot: Capture Window",
         "icon": "$(window)"
       },
       {
         "command": "mcp-screenshot.captureRegion",
-        "title": "MCP Screenshot: Capture Region",
+        "title": "MCP ACS Screenshot: Capture Region",
         "icon": "$(selection)"
       },
       {
         "command": "mcp-screenshot.listDisplays",
-        "title": "MCP Screenshot: List Displays"
+        "title": "MCP ACS Screenshot: List Displays"
       },
       {
         "command": "mcp-screenshot.listWindows",
-        "title": "MCP Screenshot: List Windows"
+        "title": "MCP ACS Screenshot: List Windows"
       },
       {
         "command": "mcp-screenshot.openSettings",
-        "title": "MCP Screenshot: Open Settings"
+        "title": "MCP ACS Screenshot: Open Settings"
       },
       {
         "command": "mcp.screenshot.capture",
-        "title": "MCP Screenshot: Capture (LSP)"
+        "title": "MCP ACS Screenshot: Capture (LSP)"
       },
       {
         "command": "mcp.screenshot.getCapabilities",
-        "title": "MCP Screenshot: Get Capabilities (LSP)"
+        "title": "MCP ACS Screenshot: Get Capabilities (LSP)"
       }
     ],
     "configuration": {
-      "title": "MCP Screenshot",
+      "title": "MCP ACS Screenshot",
       "properties": {
         "mcpScreenshot.defaultFormat": {
           "type": "string",
@@ -281,13 +270,13 @@
     "walkthroughs": [
       {
         "id": "mcp-screenshot.walkthrough",
-        "title": "Get Started with MCP Screenshot",
+        "title": "Get Started with MCP ACS Screenshot",
         "description": "Learn how to capture screenshots with AI assistance",
         "steps": [
           {
             "id": "install",
             "title": "Extension Installed",
-            "description": "MCP Screenshot is now active.\n[Open Settings](command:workbench.action.openSettings?%5B%22mcpScreenshot%22%5D)",
+            "description": "MCP ACS Screenshot is now active.\n[Open Settings](command:workbench.action.openSettings?%5B%22mcpScreenshot%22%5D)",
             "media": {
               "markdown": "README.md"
             }
@@ -368,7 +357,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@ai-capabilities-suite/mcp-screenshot": "^1.5.21",
+    "@ai-capabilities-suite/mcp-screenshot": "^1.5.23",
     "@ai-capabilities-suite/vscode-shared-status-bar": "^1.0.21",
     "@modelcontextprotocol/sdk": "^1.23.0",
     "vscode-languageclient": "^10.0.0-next.15",

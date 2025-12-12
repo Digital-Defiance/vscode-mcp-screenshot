@@ -1,4 +1,4 @@
-# 📸 MCP Screenshot - VS Code Extension
+# 📸 MCP ACS Screenshot - VS Code Extension
 
 **Give AI agents visual superpowers to see, analyze, and document your applications like never before.**
 
@@ -17,6 +17,7 @@ This repository is part of the [AI Capabilitites Suite](https://github.com/Digit
 ### 🎯 Revolutionary Use Cases
 
 #### 📚 **"AI, create documentation for this feature"**
+
 ```
 You: "Document the new dashboard layout"
 AI: *Captures screenshots, analyzes UI components*
@@ -24,6 +25,7 @@ AI: "Created comprehensive guide with 8 annotated screenshots showing navigation
 ```
 
 #### 🐛 **"AI, help debug this UI issue"**
+
 ```
 You: "The button alignment looks wrong"
 AI: *Captures current state, analyzes layout*
@@ -31,6 +33,7 @@ AI: "Button is 3px off-center. Here's the CSS fix and a before/after comparison.
 ```
 
 #### 🎥 **"AI, create a demo walkthrough"**
+
 ```
 You: "Show how the authentication flow works"
 AI: *Captures key screens, creates step-by-step guide*
@@ -38,6 +41,7 @@ AI: "Generated 6-step visual walkthrough with annotations and user journey map..
 ```
 
 #### 🔍 **"AI, analyze this design for accessibility"**
+
 ```
 You: "Check if this form is accessible"
 AI: *Captures form, analyzes contrast and layout*
@@ -45,6 +49,7 @@ AI: "Found 3 accessibility issues: low contrast on labels, missing focus indicat
 ```
 
 #### 📊 **"AI, compare these two implementations"**
+
 ```
 You: "Which design works better?"
 AI: *Captures both versions, analyzes differences*
@@ -52,6 +57,7 @@ AI: "Version B has 23% better visual hierarchy and clearer call-to-action placem
 ```
 
 #### 🎨 **"AI, help with responsive design"**
+
 ```
 You: "How does this look on different screen sizes?"
 AI: *Captures multiple viewport sizes*
@@ -63,11 +69,13 @@ AI: "Mobile layout breaks at 768px - navigation overlaps content. Here's the med
 ## ✨ What This Changes
 
 **Before:** AI could only work with code and text descriptions
+
 - ❌ "The button looks weird" → AI guesses what you mean
 - ❌ "Create documentation" → AI writes generic text
 - ❌ "Check the layout" → AI can't see the actual result
 
 **After:** AI can see and analyze your actual application
+
 - ✅ **Visual debugging** - AI sees exactly what's wrong
 - ✅ **Intelligent documentation** - AI creates guides with real screenshots
 - ✅ **Design analysis** - AI evaluates actual user interfaces
@@ -94,39 +102,44 @@ AI: "Mobile layout breaks at 768px - navigation overlaps content. Here's the med
 The extension includes a comprehensive Language Server providing professional-grade code intelligence:
 
 #### **Code Actions (4 features)**
+
 - **Fix Invalid Format**: Corrects invalid format values (bmp, gif) → suggests valid formats (png, jpeg, webp)
 - **Fix Quality Range**: Clamps quality values to 0-100 range
 - **Add Missing Parameters**: Generates parameter templates for incomplete function calls
 - **Migrate Deprecated API**: Converts 6 deprecated functions to modern equivalents
 
 #### **Real-time Assistance (3 features)**
+
 - **Signature Help**: Shows parameter documentation for all 5 screenshot functions as you type (triggered by `(` and `,`)
 - **Inlay Hints - Dimensions**: Shows `// 800x600px` inline after region captures
 - **Inlay Hints - File Size**: Shows `// ~2.5MB` inline based on format and quality
 
 #### **Code Navigation (3 features)**
+
 - **Document Symbols**: Navigate capture operations and list operations via outline (Ctrl+Shift+O)
 - **Document Links**: Clickable links to EXAMPLES.md for all 5 screenshot functions (Ctrl+Click)
 - **Call Hierarchy**: Visualize function dependencies (captureFull→listDisplays)
 
 #### **Visual Enhancements (3 features)**
+
 - **Semantic Highlighting**: Custom colors for `capture*` and `list*` functions, special highlighting for `enablePIIMasking`
 - **Color Provider**: Visual colors for image formats (png=blue, jpeg=orange, webp=green, bmp=red)
 - **Folding Ranges**: Collapse/expand capture operations and config objects
 
 #### **Smart Editing (3 features)**
+
 - **Selection Ranges**: Smart selection expansion with Shift+Alt+Right
 - **Linked Editing**: Simultaneously edit format variables across file
 - **Type Hierarchy**: Explore type relationships (CaptureConfig→Object)
 
 #### **Core Intelligence (4 features)**
+
 - **Color Provider**: Visual colors for image formats (png=blue, jpeg=orange, webp=green, bmp=red)
 - **Folding Ranges**: Collapse/expand capture operations and config objects
 - **Selection Ranges**: Smart selection expansion with Shift+Alt+Right
 - **Linked Editing**: Simultaneously edit format variables across file
 - **Call Hierarchy**: Visualize function dependencies (captureFull→listDisplays)
 - **Type Hierarchy**: Explore type relationships (CaptureConfig→Object)
-
 
 - **Hover Information**: Contextual help for functions, config properties, and identifiers
 - **Code Completion**: Smart autocomplete for configuration properties and values
@@ -138,6 +151,7 @@ The extension includes a comprehensive Language Server providing professional-gr
 
 1. Install from VS Code Marketplace (coming soon)
 2. Or install from VSIX file:
+
    ```bash
    code --install-extension mcp-screenshot-0.0.1.vsix
    ```
@@ -146,12 +160,12 @@ The extension includes a comprehensive Language Server providing professional-gr
 
 ### Commands
 
-- **MCP Screenshot: Capture Full Screen** - Capture the entire screen
-- **MCP Screenshot: Capture Window** - Select and capture a specific window
-- **MCP Screenshot: Capture Region** - Capture a rectangular region
-- **MCP Screenshot: List Displays** - Show all connected displays
-- **MCP Screenshot: List Windows** - Show all visible windows
-- **MCP Screenshot: Open Settings** - Configure extension settings
+- **MCP ACS Screenshot: Capture Full Screen** - Capture the entire screen
+- **MCP ACS Screenshot: Capture Window** - Select and capture a specific window
+- **MCP ACS Screenshot: Capture Region** - Capture a rectangular region
+- **MCP ACS Screenshot: List Displays** - Show all connected displays
+- **MCP ACS Screenshot: List Windows** - Show all visible windows
+- **MCP ACS Screenshot: Open Settings** - Configure extension settings
 
 ### LSP Features in Action
 
@@ -251,15 +265,17 @@ Configure the extension via VS Code settings:
 ### AI-Powered Workflows
 
 #### **Documentation Generation**
+
 ```
 1. You: "@copilot Document the user registration flow"
-2. AI: *Uses MCP Screenshot to capture each step*
+2. AI: *Uses MCP ACS Screenshot to capture each step*
 3. AI: *Analyzes UI elements and user journey*
 4. AI: *Generates markdown with embedded screenshots*
 5. Result: Complete documentation with visual guides
 ```
 
 #### **Bug Report Creation**
+
 ```
 1. You: "@copilot This form validation isn't working right"
 2. AI: *Captures current state and error conditions*
@@ -269,6 +285,7 @@ Configure the extension via VS Code settings:
 ```
 
 #### **Design Review & Feedback**
+
 ```
 1. You: "@copilot Review this new feature design"
 2. AI: *Captures different states and interactions*
@@ -278,6 +295,7 @@ Configure the extension via VS Code settings:
 ```
 
 #### **Responsive Design Testing**
+
 ```
 1. You: "@copilot Check how this looks on mobile"
 2. AI: *Captures multiple viewport sizes*
@@ -291,13 +309,13 @@ Configure the extension via VS Code settings:
 #### Capture Full Screen
 
 1. Open Command Palette (Ctrl+Shift+P / Cmd+Shift+P)
-2. Run "MCP Screenshot: Capture Full Screen"
+2. Run "MCP ACS Screenshot: Capture Full Screen"
 3. Screenshot is saved to configured directory
 
 #### Capture Specific Window
 
 1. Open Command Palette
-2. Run "MCP Screenshot: Capture Window"
+2. Run "MCP ACS Screenshot: Capture Window"
 3. Select window from the list
 4. Choose whether to include window frame
 5. Screenshot is captured
@@ -305,7 +323,7 @@ Configure the extension via VS Code settings:
 #### Capture Region
 
 1. Open Command Palette
-2. Run "MCP Screenshot: Capture Region"
+2. Run "MCP ACS Screenshot: Capture Region"
 3. Enter coordinates and dimensions
 4. Screenshot is captured
 
@@ -314,6 +332,7 @@ Configure the extension via VS Code settings:
 #### Code Actions Examples
 
 **Fix Invalid Format:**
+
 ```javascript
 // ⚠️ Warning: Invalid format 'bmp'
 const screenshot = await captureFull({ format: 'bmp' });
@@ -321,6 +340,7 @@ const screenshot = await captureFull({ format: 'bmp' });
 ```
 
 **Fix Quality Range:**
+
 ```javascript
 // ❌ Error: Quality 150 out of range
 const screenshot = await captureFull({ format: 'jpeg', quality: 150 });
@@ -328,6 +348,7 @@ const screenshot = await captureFull({ format: 'jpeg', quality: 150 });
 ```
 
 **Add Missing Parameters:**
+
 ```javascript
 // ❌ Error: Missing required parameters
 const screenshot = await captureFull();
@@ -336,6 +357,7 @@ const screenshot = await captureFull({ format: 'png', quality: 90 });
 ```
 
 **Migrate Deprecated API:**
+
 ```javascript
 // ℹ️ Info: takeScreenshot is deprecated
 const screenshot = await takeScreenshot();
@@ -398,6 +420,7 @@ async function screenshots() {
 ```
 
 **Document Links:**
+
 ```javascript
 // Hover over function to see underlined link
 // Ctrl+Click to open EXAMPLES.md
@@ -406,6 +429,7 @@ captureWindow({ windowTitle: 'VSCode' });  // → Links to captureWindow example
 ```
 
 **Call Hierarchy:**
+
 ```javascript
 // Right-click 'captureFull' → Show Call Hierarchy
 captureFull({ format: 'png' });
@@ -429,6 +453,7 @@ const config = {
 ```
 
 **Color Provider:**
+
 ```javascript
 // Color squares appear in gutter
 format: 'png'   // 🟦 Blue square
@@ -437,6 +462,7 @@ format: 'webp'  // 🟩 Green square
 ```
 
 **Folding Ranges:**
+
 ```javascript
 // Click fold icon to collapse
 captureFull({  // ▼ Click to fold
@@ -447,6 +473,7 @@ captureFull({  // ▼ Click to fold
 ```
 
 **Selection Ranges:**
+
 ```javascript
 // Place cursor, press Shift+Alt+Right to expand
 captureFull({ format: 'png' });
@@ -456,6 +483,7 @@ captureFull({ format: 'png' });
 ```
 
 **Linked Editing:**
+
 ```javascript
 // Edit 'format' on line 1, line 3 updates automatically
 const format = 'png';
@@ -466,6 +494,7 @@ captureWindow({ format });  // Also updates
 #### Smart Editing Examples
 
 **Selection Ranges:**
+
 ```javascript
 // Place cursor, press Shift+Alt+Right to expand
 captureFull({ format: 'png' });
@@ -475,6 +504,7 @@ captureFull({ format: 'png' });
 ```
 
 **Linked Editing:**
+
 ```javascript
 // Edit 'format' on line 1, line 3 updates automatically
 const format = 'png';
@@ -483,6 +513,7 @@ captureWindow({ format });  // Also updates
 ```
 
 **Type Hierarchy:**
+
 ```typescript
 // Right-click 'CaptureConfig' → Show Type Hierarchy
 const config: CaptureConfig = { format: 'png' };
@@ -572,11 +603,12 @@ const displays = await vscode.commands.executeCommand(
 
 ### Extension Not Starting
 
-Check the Output panel (View → Output → MCP Screenshot) for error messages.
+Check the Output panel (View → Output → MCP ACS Screenshot) for error messages.
 
 ### Permission Errors on Linux
 
 Ensure X11 access:
+
 ```bash
 xhost +local:
 ```
@@ -584,15 +616,16 @@ xhost +local:
 ### macOS Screen Recording Permission
 
 Grant screen recording permission:
+
 1. System Preferences → Security & Privacy → Privacy
 2. Select "Screen Recording"
 3. Add Visual Studio Code
 
 ## Support
 
-- GitHub: https://github.com/digital-defiance/ai-capabilities-suite
-- Issues: https://github.com/digital-defiance/ai-capabilities-suite/issues
-- Email: info@digitaldefiance.org
+- GitHub: <https://github.com/digital-defiance/ai-capabilities-suite>
+- Issues: <https://github.com/digital-defiance/ai-capabilities-suite/issues>
+- Email: <info@digitaldefiance.org>
 
 ## License
 

@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as vscode from "vscode";
 
 /**
- * LSP Integration Tests for MCP Screenshot Extension
+ * LSP Integration Tests for MCP ACS Screenshot Extension
  * Tests the Language Server Protocol features and their integration with VSCode
  */
 suite("LSP Integration Tests", () => {

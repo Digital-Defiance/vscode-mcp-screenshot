@@ -19,117 +19,11 @@ let mcpClient: MCPScreenshotClient | undefined;
 let languageClient: LanguageClient | undefined;
 let outputChannel: vscode.LogOutputChannel;
 
-/**
- * Add this MCP server to the workspace mcp.json configuration
- */
-async function configureMcpServer(): Promise<void> {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (!workspaceFolders || workspaceFolders.length === 0) {
-    const choice = await vscode.window.showWarningMessage(
-      "No workspace folder open. Would you like to add the MCP server to your user settings instead?",
-      "Add to User Settings",
-      "Cancel"
-    );
-    if (choice === "Add to User Settings") {
-      await vscode.commands.executeCommand("workbench.action.openSettingsJson");
-      vscode.window.showInformationMessage(
-        "Add the MCP server configuration manually. See the extension README for details."
-      );
-    }
-    return;
-  }
-
-  const workspaceFolder = workspaceFolders[0];
-  const vscodePath = path.join(workspaceFolder.uri.fsPath, ".vscode");
-  const mcpJsonPath = path.join(vscodePath, "mcp.json");
-
-  // Ensure .vscode directory exists
-  if (!fs.existsSync(vscodePath)) {
-    fs.mkdirSync(vscodePath, { recursive: true });
-  }
-
-  // Read existing mcp.json or create new one
-  let mcpConfig: { servers?: Record<string, any> } = { servers: {} };
-  if (fs.existsSync(mcpJsonPath)) {
-    try {
-      const content = fs.readFileSync(mcpJsonPath, "utf8");
-      mcpConfig = JSON.parse(content);
-      if (!mcpConfig.servers) {
-        mcpConfig.servers = {};
-      }
-    } catch (error) {
-      outputChannel.appendLine(`Error reading mcp.json: ${error}`);
-    }
-  }
-
-  // Add our server configuration
-  const serverName = "mcp-screenshot";
-  if (mcpConfig.servers && mcpConfig.servers[serverName]) {
-    const choice = await vscode.window.showWarningMessage(
-      `MCP server "${serverName}" is already configured. Do you want to replace it?`,
-      "Replace",
-      "Cancel"
-    );
-    if (choice !== "Replace") {
-      return;
-    }
-  }
-
-  mcpConfig.servers = mcpConfig.servers || {};
-  mcpConfig.servers[serverName] = {
-    type: "stdio",
-    command: process.platform === "win32" ? "npx.cmd" : "npx",
-    args: ["-y", "@ai-capabilities-suite/mcp-screenshot"],
-  };
-
-  // Write the updated configuration
-  fs.writeFileSync(mcpJsonPath, JSON.stringify(mcpConfig, null, 2));
-
-  // Open the file to show the user
-  const doc = await vscode.workspace.openTextDocument(mcpJsonPath);
-  await vscode.window.showTextDocument(doc);
-
-  vscode.window.showInformationMessage(
-    `MCP Screenshot server added to ${mcpJsonPath}. Restart the MCP server to use it with Copilot.`
-  );
-}
-
 export async function activate(context: vscode.ExtensionContext) {
-  outputChannel = vscode.window.createOutputChannel("MCP Screenshot", {
+  outputChannel = vscode.window.createOutputChannel("MCP ACS Screenshot", {
     log: true,
   });
-  outputChannel.appendLine("MCP Screenshot extension activating...");
-
-  // Register MCP server definition provider (for future MCP protocol support)
-  try {
-    const mcpProviderId = "mcp-screenshot.mcp-provider";
-    const mcpProvider: vscode.McpServerDefinitionProvider = {
-      provideMcpServerDefinitions: async (token) => {
-        const config = vscode.workspace.getConfiguration("mcpScreenshot");
-        const command = config.get<string>("serverCommand", "npx");
-        const args = config.get<string[]>("serverArgs", [
-          "-y",
-          "@ai-capabilities-suite/mcp-screenshot",
-        ]);
-
-        return [
-          new vscode.McpStdioServerDefinition("MCP Screenshot", command, args),
-        ];
-      },
-      resolveMcpServerDefinition: async (server, token) => {
-        return server;
-      },
-    };
-
-    context.subscriptions.push(
-      vscode.lm.registerMcpServerDefinitionProvider(mcpProviderId, mcpProvider)
-    );
-    outputChannel.appendLine("MCP server definition provider registered");
-  } catch (error) {
-    outputChannel.appendLine(
-      `MCP provider registration skipped (API not available): ${error}`
-    );
-  }
+  outputChannel.appendLine("MCP ACS Screenshot extension activating...");
 
   // Register chat participant for Copilot integration
   const participant = vscode.chat.createChatParticipant(
@@ -137,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
     async (request, context, stream, token) => {
       if (!mcpClient) {
         stream.markdown(
-          "MCP Screenshot server is not running. Please start it first."
+          "MCP ACS Screenshot server is not running. Please start it first."
         );
         return;
       }
@@ -273,25 +167,23 @@ export async function activate(context: vscode.ExtensionContext) {
     try {
       mcpClient = new MCPScreenshotClient(outputChannel);
       await mcpClient.start();
-      outputChannel.appendLine("MCP Screenshot server started successfully");
+      outputChannel.appendLine(
+        "MCP ACS Screenshot server started successfully"
+      );
 
       // Set the client in the accessor for language server access
       mcpClientAccessor.setClient(mcpClient);
     } catch (error) {
       outputChannel.appendLine(`Failed to start MCP server: ${error}`);
       if (process.env.NODE_ENV === "production") {
-        vscode.window.showErrorMessage("Failed to start MCP Screenshot server");
+        vscode.window.showErrorMessage(
+          "Failed to start MCP ACS Screenshot server"
+        );
       }
     }
   }
 
   // Register commands
-  context.subscriptions.push(
-    vscode.commands.registerCommand("mcp-screenshot.configureMcp", async () => {
-      await configureMcpServer();
-    })
-  );
-
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "mcp-screenshot.captureFullScreen",
@@ -349,16 +241,16 @@ export async function activate(context: vscode.ExtensionContext) {
     // Don't fail extension activation if language server fails
     if (process.env.NODE_ENV !== "production") {
       vscode.window.showWarningMessage(
-        `MCP Screenshot LSP failed to start: ${error}`
+        `MCP ACS Screenshot LSP failed to start: ${error}`
       );
     }
   }
 
-  outputChannel.appendLine("MCP Screenshot extension activated");
+  outputChannel.appendLine("MCP ACS Screenshot extension activated");
 
   // Register with shared status bar
   await registerExtension("mcp-screenshot", {
-    displayName: "MCP Screenshot",
+    displayName: "MCP ACS Screenshot",
     status: "ok",
     settingsQuery: "mcpScreenshot",
     actions: [
@@ -457,7 +349,7 @@ async function startLanguageServer(
   // Create the language client and start it
   languageClient = new LanguageClient(
     "mcpScreenshotLSP",
-    "MCP Screenshot Language Server",
+    "MCP ACS Screenshot Language Server",
     serverOptions,
     clientOptions
   );
@@ -491,7 +383,7 @@ export async function deactivate() {
 
 async function captureFullScreen() {
   if (!mcpClient) {
-    vscode.window.showErrorMessage("MCP Screenshot server not running");
+    vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
     return;
   }
 
@@ -549,7 +441,7 @@ async function captureFullScreen() {
 
 async function captureWindow() {
   if (!mcpClient) {
-    vscode.window.showErrorMessage("MCP Screenshot server not running");
+    vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
     return;
   }
 
@@ -616,7 +508,7 @@ async function captureWindow() {
 
 async function captureRegion() {
   if (!mcpClient) {
-    vscode.window.showErrorMessage("MCP Screenshot server not running");
+    vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
     return;
   }
 
@@ -696,7 +588,7 @@ async function captureRegion() {
 
 async function listDisplays() {
   if (!mcpClient) {
-    vscode.window.showErrorMessage("MCP Screenshot server not running");
+    vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
     return;
   }
 
@@ -730,7 +622,7 @@ async function listDisplays() {
 
 async function listWindows() {
   if (!mcpClient) {
-    vscode.window.showErrorMessage("MCP Screenshot server not running");
+    vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
     return;
   }
 

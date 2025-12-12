@@ -5,7 +5,7 @@ import * as fc from "fast-check";
  * Feature: mcp-screenshot-lsp, Property 4: Code lens execution
  *
  * Property: For any code lens action click, the LSP should execute the
- * corresponding MCP Screenshot command
+ * corresponding MCP ACS Screenshot command
  *
  * Validates: Requirements 2.4
  */
@@ -241,7 +241,7 @@ suite("Language Server Code Lens Execution - Property-Based Tests", () => {
               status: "error",
               error: {
                 code: "CLIENT_UNAVAILABLE",
-                message: "MCP Screenshot client is not available",
+                message: "MCP ACS Screenshot client is not available",
                 details: {
                   command: commandName,
                 },

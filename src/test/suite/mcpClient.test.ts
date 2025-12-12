@@ -11,16 +11,18 @@ suite("MCP Client Test Suite", () => {
   let client: MCPScreenshotClient;
 
   setup(() => {
-    outputChannel = vscode.window.createOutputChannel("Test MCP Screenshot");
+    outputChannel = vscode.window.createOutputChannel(
+      "Test MCP ACS Screenshot"
+    );
     client = new MCPScreenshotClient(outputChannel);
   });
 
-  teardown(async function() {
+  teardown(async function () {
     this.timeout(5000);
     if (client) {
       client.stop();
     }
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 
@@ -95,16 +97,16 @@ suite("MCP Client - Integration Tests", () => {
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP Screenshot Integration"
+      "Test MCP ACS Screenshot Integration"
     );
   });
 
-  teardown(async function() {
+  teardown(async function () {
     this.timeout(5000);
     if (client) {
       client.stop();
     }
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 
@@ -167,17 +169,17 @@ suite("MCP Client - Method Tests", () => {
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP Screenshot Methods"
+      "Test MCP ACS Screenshot Methods"
     );
     client = new MCPScreenshotClient(outputChannel);
   });
 
-  teardown(async function() {
+  teardown(async function () {
     this.timeout(5000);
     if (client) {
       client.stop();
     }
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     outputChannel.dispose();
   });
 

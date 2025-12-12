@@ -5,10 +5,10 @@ import * as fs from "fs";
 import * as os from "os";
 
 /**
- * VSCode Extension E2E Tests for MCP Screenshot
+ * VSCode Extension E2E Tests for MCP ACS Screenshot
  * Tests the extension's integration with VSCode and the MCP server
  */
-suite("MCP Screenshot Extension Test Suite", () => {
+suite("MCP ACS Screenshot Extension Test Suite", () => {
   let tempDir: string;
 
   suiteSetup(async function () {
@@ -150,13 +150,13 @@ suite("MCP Screenshot Extension Test Suite", () => {
   });
 
   test("Output channel should be created", () => {
-    // The extension creates an output channel named "MCP Screenshot"
+    // The extension creates an output channel named "MCP ACS Screenshot"
     // We can't directly access it, but we can verify it doesn't throw
     assert.ok(true, "Output channel test passed");
   });
 });
 
-suite("MCP Screenshot Extension - Integration Tests", () => {
+suite("MCP ACS Screenshot Extension - Integration Tests", () => {
   test("Extension should handle server startup failure gracefully", async function () {
     this.timeout(10000);
 
@@ -195,7 +195,7 @@ suite("MCP Screenshot Extension - Integration Tests", () => {
   });
 });
 
-suite("MCP Screenshot Extension - Command Tests", () => {
+suite("MCP ACS Screenshot Extension - Command Tests", () => {
   test("Capture full screen command should be available", async () => {
     const commands = await vscode.commands.getCommands(true);
     assert.ok(
@@ -221,7 +221,7 @@ suite("MCP Screenshot Extension - Command Tests", () => {
   });
 });
 
-suite("MCP Screenshot Extension - Configuration Tests", () => {
+suite("MCP ACS Screenshot Extension - Configuration Tests", () => {
   test("Should support all image formats", () => {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
     const formatProperty = config.inspect("defaultFormat");
@@ -316,7 +316,7 @@ suite("MCP Screenshot Extension - Configuration Tests", () => {
   });
 });
 
-suite("MCP Screenshot Extension - Error Handling", () => {
+suite("MCP ACS Screenshot Extension - Error Handling", () => {
   test("Should handle server not running", async function () {
     this.timeout(10000);
 
@@ -362,7 +362,7 @@ suite("MCP Screenshot Extension - Error Handling", () => {
   });
 });
 
-suite("MCP Screenshot Extension - LSP Integration Tests", () => {
+suite("MCP ACS Screenshot Extension - LSP Integration Tests", () => {
   suiteSetup(async function () {
     this.timeout(30000);
 

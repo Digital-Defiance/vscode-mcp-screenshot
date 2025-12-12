@@ -1,6 +1,6 @@
 # VSCode Extension Testing Guide
 
-This document describes how to test the MCP Screenshot VSCode extension.
+This document describes how to test the MCP ACS Screenshot VSCode extension.
 
 ## Test Structure
 
@@ -32,6 +32,7 @@ npm test
 ```
 
 This will:
+
 1. Download VSCode test instance (if needed)
 2. Compile the extension
 3. Launch VSCode with the extension
@@ -45,6 +46,7 @@ npm run watch
 ```
 
 Then in another terminal:
+
 ```bash
 npm test
 ```
@@ -66,6 +68,7 @@ npm test -- --grep "MCP Client"
 Tests the full extension integration with VSCode:
 
 **Test Coverage:**
+
 - ✅ Extension activation
 - ✅ Command registration
 - ✅ Configuration management
@@ -74,6 +77,7 @@ Tests the full extension integration with VSCode:
 - ✅ Output channel creation
 
 **Key Tests:**
+
 - Extension should be present and activate
 - All 6 commands should be registered
 - Configuration should have correct defaults
@@ -85,6 +89,7 @@ Tests the full extension integration with VSCode:
 Tests the MCP client functionality:
 
 **Test Coverage:**
+
 - ✅ Client creation
 - ✅ Method availability
 - ✅ Server startup/shutdown
@@ -93,6 +98,7 @@ Tests the MCP client functionality:
 - ✅ Timeout handling
 
 **Key Tests:**
+
 - Client should have all required methods
 - Client should handle start/stop lifecycle
 - Client should reject operations before start
@@ -104,6 +110,7 @@ Tests the MCP client functionality:
 ### Testing in Development
 
 1. **Open Extension Development Host:**
+
    ```bash
    # In VSCode, press F5 or:
    code --extensionDevelopmentPath=/path/to/vscode-mcp-screenshot
@@ -111,7 +118,7 @@ Tests the MCP client functionality:
 
 2. **Test Commands:**
    - Open Command Palette (Ctrl+Shift+P / Cmd+Shift+P)
-   - Type "MCP Screenshot"
+   - Type "MCP ACS Screenshot"
    - Test each command:
      - Capture Full Screen
      - Capture Window
@@ -122,7 +129,7 @@ Tests the MCP client functionality:
 
 3. **Test Configuration:**
    - Open Settings (Ctrl+, / Cmd+,)
-   - Search for "MCP Screenshot"
+   - Search for "MCP ACS Screenshot"
    - Modify settings and verify behavior
 
 4. **Test Error Scenarios:**
@@ -134,11 +141,13 @@ Tests the MCP client functionality:
 ### Testing the Packaged Extension
 
 1. **Package the Extension:**
+
    ```bash
    npm run package
    ```
 
 2. **Install Locally:**
+
    ```bash
    code --install-extension mcp-screenshot-0.0.1.vsix
    ```
@@ -150,6 +159,7 @@ Tests the MCP client functionality:
    - Test all commands
 
 4. **Uninstall:**
+
    ```bash
    code --uninstall-extension DigitalDefiance.mcp-screenshot
    ```
@@ -282,6 +292,7 @@ open coverage/index.html
 ### Issue: Tests Timeout
 
 **Solution:**
+
 ```typescript
 // Increase timeout in test
 test('Long running test', async function() {
@@ -293,11 +304,13 @@ test('Long running test', async function() {
 ### Issue: Extension Not Activating
 
 **Causes:**
+
 - Missing dependencies
 - Compilation errors
 - Invalid package.json
 
 **Solutions:**
+
 1. Check compilation: `npm run compile`
 2. Verify package.json syntax
 3. Check extension logs in Output panel
@@ -305,11 +318,13 @@ test('Long running test', async function() {
 ### Issue: Server Not Starting
 
 **Causes:**
+
 - MCP server package not installed
 - Invalid server command
 - Port conflicts
 
 **Solutions:**
+
 1. Install server: `npm install @ai-capabilities-suite/mcp-screenshot`
 2. Check server command in settings
 3. Verify no port conflicts
@@ -317,6 +332,7 @@ test('Long running test', async function() {
 ### Issue: Display Server Not Available (Linux)
 
 **Solution:**
+
 ```bash
 # Use Xvfb for headless testing
 xvfb-run -a npm test
@@ -330,6 +346,7 @@ npm test
 ### Issue: Permission Denied (macOS)
 
 **Solution:**
+
 1. Open System Preferences
 2. Go to Security & Privacy → Privacy
 3. Select Screen Recording
@@ -341,6 +358,7 @@ npm test
 ### Writing Tests
 
 1. **Use Descriptive Names:**
+
    ```typescript
    test('Should capture full screen with PNG format', async () => {
      // ...
@@ -348,6 +366,7 @@ npm test
    ```
 
 2. **Test One Thing:**
+
    ```typescript
    // Good
    test('Should register capture command', () => {
@@ -361,6 +380,7 @@ npm test
    ```
 
 3. **Clean Up Resources:**
+
    ```typescript
    teardown(() => {
      client.stop();
@@ -369,6 +389,7 @@ npm test
    ```
 
 4. **Handle Async Properly:**
+
    ```typescript
    test('Async test', async function() {
      this.timeout(10000);
@@ -377,6 +398,7 @@ npm test
    ```
 
 5. **Use Assertions:**
+
    ```typescript
    assert.ok(value, 'Value should be truthy');
    assert.strictEqual(actual, expected, 'Values should match');
@@ -386,6 +408,7 @@ npm test
 ### Test Organization
 
 1. **Group Related Tests:**
+
    ```typescript
    suite('Feature Tests', () => {
      suite('Sub-feature Tests', () => {
@@ -395,6 +418,7 @@ npm test
    ```
 
 2. **Use Setup/Teardown:**
+
    ```typescript
    suite('Tests', () => {
      let resource: Resource;
@@ -410,6 +434,7 @@ npm test
    ```
 
 3. **Share Test Data:**
+
    ```typescript
    const testData = {
      validInput: { /* ... */ },

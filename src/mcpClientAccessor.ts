@@ -1,7 +1,7 @@
 import { MCPScreenshotClient } from "./mcpClient";
 
 /**
- * Singleton accessor for the MCP Screenshot client.
+ * Singleton accessor for the MCP ACS Screenshot client.
  *
  * This class provides a safe way for the language server to access the MCP client
  * instance that is managed by the extension. It uses the singleton pattern to ensure
@@ -56,7 +56,7 @@ class MCPClientAccessor {
    *
    * This should be called by the extension after the MCP client is initialized.
    *
-   * @param client - The MCP Screenshot client instance to store
+   * @param client - The MCP ACS Screenshot client instance to store
    *
    * @example
    * ```typescript
@@ -72,7 +72,7 @@ class MCPClientAccessor {
   /**
    * Get the MCP client instance
    *
-   * @returns The MCP Screenshot client instance or undefined if not set
+   * @returns The MCP ACS Screenshot client instance or undefined if not set
    *
    * @example
    * ```typescript
@@ -124,7 +124,7 @@ class MCPClientAccessor {
  * Singleton instance of the MCP client accessor
  *
  * Use this instance throughout the extension and language server to access
- * the MCP Screenshot client.
+ * the MCP ACS Screenshot client.
  *
  * @public
  */

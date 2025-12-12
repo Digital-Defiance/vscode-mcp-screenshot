@@ -30,7 +30,7 @@ suite("Language Server Command Error Handling - Property-Based Tests", () => {
             status: "error",
             error: {
               code: "CLIENT_UNAVAILABLE",
-              message: "MCP Screenshot client is not available",
+              message: "MCP ACS Screenshot client is not available",
               details: {
                 command,
               },
@@ -264,7 +264,7 @@ suite("Language Server Command Error Handling - Property-Based Tests", () => {
           let message = "";
           switch (errorCode) {
             case "CLIENT_UNAVAILABLE":
-              message = "MCP Screenshot client is not available";
+              message = "MCP ACS Screenshot client is not available";
               break;
             case "UNKNOWN_COMMAND":
               message = `Unknown command: ${commandName}`;
