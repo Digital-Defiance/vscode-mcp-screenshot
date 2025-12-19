@@ -1,21 +1,20 @@
 import * as vscode from "vscode";
-import { spawn, ChildProcess } from "child_process";
 import * as path from "path";
+import {
+  BaseMCPClient,
+  LogOutputChannel,
+} from "@ai-capabilities-suite/mcp-client-base";
 
-export class MCPScreenshotClient {
-  private process: ChildProcess | undefined;
-  private outputChannel: vscode.OutputChannel;
-
-  constructor(outputChannel: vscode.OutputChannel) {
-    this.outputChannel = outputChannel;
+export class MCPScreenshotClient extends BaseMCPClient {
+  constructor(outputChannel: LogOutputChannel) {
+    super("Screenshot", outputChannel);
   }
 
-  async start(): Promise<void> {
+  // ========== Abstract Method Implementations ==========
+
+  protected getServerCommand(): { command: string; args: string[] } {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
     let serverCommand = config.get<string>("serverCommand", "npx");
-    if (serverCommand === "npx" && process.platform === "win32") {
-      serverCommand = "npx.cmd";
-    }
     let serverArgs = config.get<string[]>("serverArgs", [
       "-y",
       "@ai-capabilities-suite/mcp-screenshot",
@@ -40,63 +39,53 @@ export class MCPScreenshotClient {
             "../mcp-screenshot/dist/cli.js"
           );
           serverArgs = [serverScript];
-          this.outputChannel.appendLine(
-            `Test mode: Using local server at ${serverScript}`
-          );
+          this.log("info", `Test mode: Using local server at ${serverScript}`);
         } else {
-          this.outputChannel.appendLine(
+          this.log(
+            "info",
             "Test mode: Could not find extension path, falling back to configuration"
           );
         }
       } catch (error) {
-        this.outputChannel.appendLine(`Test mode error: ${error}`);
+        this.log("warn", `Test mode error: ${error}`);
       }
     }
 
-    this.outputChannel.appendLine(
-      `Starting MCP ACS Screenshot server: ${serverCommand} ${serverArgs.join(
-        " "
-      )}`
-    );
-
-    this.process = spawn(serverCommand, serverArgs, {
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    if (this.process.stdout) {
-      this.process.stdout.on("data", (data) => {
-        this.outputChannel.appendLine(`[stdout] ${data.toString()}`);
-      });
+    // Handle Windows npx command
+    if (serverCommand === "npx" && process.platform === "win32") {
+      serverCommand = "npx.cmd";
     }
 
-    if (this.process.stderr) {
-      this.process.stderr.on("data", (data) => {
-        this.outputChannel.appendLine(`[stderr] ${data.toString()}`);
-      });
-    }
+    return { command: serverCommand, args: serverArgs };
+  }
 
-    this.process.on("error", (error) => {
-      this.outputChannel.appendLine(`Process error: ${error.message}`);
-    });
+  protected getServerEnv(): Record<string, string> {
+    const env: Record<string, string> = {};
 
-    this.process.on("exit", (code) => {
-      try {
-        this.outputChannel.appendLine(`Process exited with code ${code}`);
-      } catch (e) {
-        // Channel may be disposed
+    // Copy process.env, filtering out undefined values
+    for (const [key, value] of Object.entries(process.env)) {
+      if (value !== undefined) {
+        env[key] = value;
       }
-    });
+    }
 
-    // Give the server a moment to start
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return env;
   }
 
-  stop(): void {
-    if (this.process) {
-      this.process.kill();
-      this.process = undefined;
+  protected async onServerReady(): Promise<void> {
+    // Send initialized notification
+    await this.sendNotification("initialized", {});
+
+    // Load configuration - list available tools
+    try {
+      const tools = await this.sendRequest("tools/list", {});
+      this.log("info", `Server tools loaded: ${JSON.stringify(tools)}`);
+    } catch (error) {
+      this.log("warn", `Failed to list tools: ${error}`);
     }
   }
+
+  // ========== Screenshot-Specific Methods ==========
 
   async captureFullScreen(params: {
     format: string;
@@ -134,66 +123,30 @@ export class MCPScreenshotClient {
     return this.callTool("screenshot_list_windows", {});
   }
 
-  private async callTool(toolName: string, params: any): Promise<any> {
-    if (!this.process || !this.process.stdin) {
-      throw new Error("MCP server not running");
+  // Override callTool to handle MCP-specific response format
+  protected override async callTool(
+    name: string,
+    args: unknown
+  ): Promise<unknown> {
+    const result = (await this.sendRequest("tools/call", {
+      name,
+      arguments: args,
+    })) as any;
+
+    if (result.isError) {
+      throw new Error(result.content[0]?.text || "Tool call failed");
     }
 
-    return new Promise((resolve, reject) => {
-      const request = {
-        jsonrpc: "2.0",
-        id: Date.now(),
-        method: "tools/call",
-        params: {
-          name: toolName,
-          arguments: params,
-        },
-      };
+    // Parse result content
+    const content = result.content[0]?.text;
+    if (content) {
+      try {
+        return JSON.parse(content);
+      } catch {
+        return content;
+      }
+    }
 
-      const requestStr = JSON.stringify(request) + "\n";
-      this.outputChannel.appendLine(`Sending request: ${requestStr}`);
-
-      let responseData = "";
-      const responseHandler = (data: Buffer) => {
-        responseData += data.toString();
-
-        // Try to parse complete JSON response
-        try {
-          const lines = responseData.split("\n");
-          for (const line of lines) {
-            if (line.trim()) {
-              const response = JSON.parse(line);
-              if (response.id === request.id) {
-                this.process?.stdout?.removeListener("data", responseHandler);
-
-                if (response.error) {
-                  reject(new Error(response.error.message));
-                } else {
-                  resolve(response.result);
-                }
-                return;
-              }
-            }
-          }
-        } catch (e) {
-          // Not a complete JSON yet, wait for more data
-        }
-      };
-
-      this.process?.stdout?.on("data", responseHandler);
-
-      // Set timeout
-      const timeout = setTimeout(() => {
-        this.process?.stdout?.removeListener("data", responseHandler);
-        reject(new Error("Request timeout"));
-      }, 30000);
-
-      this.process?.stdin?.write(requestStr, (err) => {
-        if (err) {
-          clearTimeout(timeout);
-          reject(err);
-        }
-      });
-    });
+    return result;
   }
 }

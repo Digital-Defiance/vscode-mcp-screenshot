@@ -164,21 +164,46 @@ export async function activate(context: vscode.ExtensionContext) {
   const autoStart = config.get<boolean>("autoStart", true);
 
   if (autoStart) {
-    try {
-      mcpClient = new MCPScreenshotClient(outputChannel);
-      await mcpClient.start();
-      outputChannel.appendLine(
-        "MCP ACS Screenshot server started successfully"
-      );
+    mcpClient = new MCPScreenshotClient(outputChannel);
 
-      // Set the client in the accessor for language server access
-      mcpClientAccessor.setClient(mcpClient);
-    } catch (error) {
-      outputChannel.appendLine(`Failed to start MCP server: ${error}`);
-      if (process.env.NODE_ENV === "production") {
-        vscode.window.showErrorMessage(
-          "Failed to start MCP ACS Screenshot server"
+    // In test mode, start the server in the background without waiting
+    // This prevents tests from hanging if the server can't start
+    const isTestMode =
+      process.env.VSCODE_TEST_MODE === "true" ||
+      process.env.NODE_ENV === "test";
+
+    if (isTestMode) {
+      // Start in background, don't wait
+      mcpClient.start().then(
+        () => {
+          outputChannel.appendLine(
+            "MCP ACS Screenshot server started successfully"
+          );
+          if (mcpClient) {
+            mcpClientAccessor.setClient(mcpClient);
+          }
+        },
+        (error) => {
+          outputChannel.appendLine(`Failed to start MCP server: ${error}`);
+        }
+      );
+    } else {
+      // In production, wait for server to start
+      try {
+        await mcpClient.start();
+        outputChannel.appendLine(
+          "MCP ACS Screenshot server started successfully"
         );
+
+        // Set the client in the accessor for language server access
+        mcpClientAccessor.setClient(mcpClient);
+      } catch (error) {
+        outputChannel.appendLine(`Failed to start MCP server: ${error}`);
+        if (process.env.NODE_ENV === "production") {
+          vscode.window.showErrorMessage(
+            "Failed to start MCP ACS Screenshot server"
+          );
+        }
       }
     }
   }
@@ -387,6 +412,15 @@ async function captureFullScreen() {
     return;
   }
 
+  // Check if server is actually connected
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    vscode.window.showErrorMessage(
+      `MCP ACS Screenshot server not ready (${status.state})`
+    );
+    return;
+  }
+
   try {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
     const format = config.get("defaultFormat", "png");
@@ -442,6 +476,15 @@ async function captureFullScreen() {
 async function captureWindow() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
+    return;
+  }
+
+  // Check if server is actually connected
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    vscode.window.showErrorMessage(
+      `MCP ACS Screenshot server not ready (${status.state})`
+    );
     return;
   }
 
@@ -509,6 +552,15 @@ async function captureWindow() {
 async function captureRegion() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
+    return;
+  }
+
+  // Check if server is actually connected
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    vscode.window.showErrorMessage(
+      `MCP ACS Screenshot server not ready (${status.state})`
+    );
     return;
   }
 
@@ -592,6 +644,15 @@ async function listDisplays() {
     return;
   }
 
+  // Check if server is actually connected
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    vscode.window.showErrorMessage(
+      `MCP ACS Screenshot server not ready (${status.state})`
+    );
+    return;
+  }
+
   try {
     outputChannel.appendLine("Listing displays...");
     const result = await mcpClient.listDisplays();
@@ -623,6 +684,15 @@ async function listDisplays() {
 async function listWindows() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
+    return;
+  }
+
+  // Check if server is actually connected
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    vscode.window.showErrorMessage(
+      `MCP ACS Screenshot server not ready (${status.state})`
+    );
     return;
   }
 

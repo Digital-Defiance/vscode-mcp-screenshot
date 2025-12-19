@@ -7,12 +7,13 @@ import { MCPScreenshotClient } from "../../mcpClient";
  * Tests the MCP client functionality in isolation
  */
 suite("MCP Client Test Suite", () => {
-  let outputChannel: vscode.OutputChannel;
+  let outputChannel: vscode.LogOutputChannel;
   let client: MCPScreenshotClient;
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP ACS Screenshot"
+      "Test MCP ACS Screenshot",
+      { log: true }
     );
     client = new MCPScreenshotClient(outputChannel);
   });
@@ -84,20 +85,21 @@ suite("MCP Client Test Suite", () => {
     } catch (error) {
       assert.ok(error instanceof Error, "Should throw error when not started");
       assert.ok(
-        (error as Error).message.includes("not running"),
-        "Error message should indicate server not running"
+        (error as Error).message.includes("not available"),
+        "Error message should indicate server not available"
       );
     }
   });
 });
 
 suite("MCP Client - Integration Tests", () => {
-  let outputChannel: vscode.OutputChannel;
+  let outputChannel: vscode.LogOutputChannel;
   let client: MCPScreenshotClient;
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP ACS Screenshot Integration"
+      "Test MCP ACS Screenshot Integration",
+      { log: true }
     );
   });
 
@@ -164,12 +166,13 @@ suite("MCP Client - Integration Tests", () => {
 });
 
 suite("MCP Client - Method Tests", () => {
-  let outputChannel: vscode.OutputChannel;
+  let outputChannel: vscode.LogOutputChannel;
   let client: MCPScreenshotClient;
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP ACS Screenshot Methods"
+      "Test MCP ACS Screenshot Methods",
+      { log: true }
     );
     client = new MCPScreenshotClient(outputChannel);
   });
@@ -196,8 +199,8 @@ suite("MCP Client - Method Tests", () => {
     try {
       await client.captureFullScreen(params);
     } catch (error) {
-      // Expected to fail if server not running
-      assert.ok((error as Error).message.includes("not running"));
+      // Expected to fail if server not available
+      assert.ok((error as Error).message.includes("not available"));
     }
   });
 
@@ -213,8 +216,8 @@ suite("MCP Client - Method Tests", () => {
     try {
       await client.captureWindow(params);
     } catch (error) {
-      // Expected to fail if server not running
-      assert.ok((error as Error).message.includes("not running"));
+      // Expected to fail if server not available
+      assert.ok((error as Error).message.includes("not available"));
     }
   });
 
@@ -232,8 +235,8 @@ suite("MCP Client - Method Tests", () => {
     try {
       await client.captureRegion(params);
     } catch (error) {
-      // Expected to fail if server not running
-      assert.ok((error as Error).message.includes("not running"));
+      // Expected to fail if server not available
+      assert.ok((error as Error).message.includes("not available"));
     }
   });
 
@@ -243,8 +246,8 @@ suite("MCP Client - Method Tests", () => {
     try {
       await client.listDisplays();
     } catch (error) {
-      // Expected to fail if server not running
-      assert.ok((error as Error).message.includes("not running"));
+      // Expected to fail if server not available
+      assert.ok((error as Error).message.includes("not available"));
     }
   });
 
@@ -254,8 +257,8 @@ suite("MCP Client - Method Tests", () => {
     try {
       await client.listWindows();
     } catch (error) {
-      // Expected to fail if server not running
-      assert.ok((error as Error).message.includes("not running"));
+      // Expected to fail if server not available
+      assert.ok((error as Error).message.includes("not available"));
     }
   });
 });

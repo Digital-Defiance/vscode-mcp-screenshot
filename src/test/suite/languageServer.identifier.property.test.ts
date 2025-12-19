@@ -14,11 +14,12 @@ import { MCPScreenshotClient } from "../../mcpClient";
  * Validates: Requirements 1.3
  */
 suite("Language Server Identifier Hover - Property-Based Tests", () => {
-  let outputChannel: vscode.OutputChannel;
+  let outputChannel: vscode.LogOutputChannel;
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test Language Server Identifier"
+      "Test Language Server Identifier",
+      { log: true }
     );
     mcpClientAccessor.clearClient();
   });

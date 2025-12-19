@@ -13,11 +13,12 @@ import { MCPScreenshotClient } from "../../mcpClient";
  * Validates: Requirements 6.3
  */
 suite("MCP Client Accessor - Property-Based Tests", () => {
-  let outputChannel: vscode.OutputChannel;
+  let outputChannel: vscode.LogOutputChannel;
 
   setup(() => {
     outputChannel = vscode.window.createOutputChannel(
-      "Test MCP Client Accessor"
+      "Test MCP Client Accessor",
+      { log: true }
     );
     // Clear any existing client
     mcpClientAccessor.clearClient();
