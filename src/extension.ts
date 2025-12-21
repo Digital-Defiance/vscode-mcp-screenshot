@@ -164,83 +164,22 @@ export async function activate(context: vscode.ExtensionContext) {
   const autoStart = config.get<boolean>("autoStart", true);
 
   if (autoStart) {
-    // In test mode, start the server in the background without waiting
-    // This prevents tests from hanging if the server can't start
-    const isTestMode =
-      process.env.VSCODE_TEST_MODE === "true" ||
-      process.env.NODE_ENV === "test";
-
-    if (isTestMode) {
+    try {
       mcpClient = new MCPScreenshotClient(outputChannel);
-
-      // Start in background, don't wait
-      mcpClient.start().then(
-        () => {
-          outputChannel.appendLine(
-            "MCP ACS Screenshot server started successfully"
-          );
-          if (mcpClient) {
-            mcpClientAccessor.setClient(mcpClient);
-          }
-        },
-        (error) => {
-          outputChannel.appendLine(`Failed to start MCP server: ${error}`);
-        }
+      await mcpClient.start();
+      outputChannel.appendLine(
+        "MCP ACS Screenshot server started successfully"
       );
-    } else {
-      // In production, show progress indicator during initialization
-      await vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: "MCP ACS Screenshot",
-          cancellable: false,
-        },
-        async (progress) => {
-          try {
-            progress.report({ message: "Starting server..." });
 
-            mcpClient = new MCPScreenshotClient(outputChannel);
-
-            // Subscribe to connection state changes
-            const stateSubscription = mcpClient.onStateChange((status) => {
-              outputChannel.appendLine(
-                `Connection state changed: ${status.state} - ${status.message}`
-              );
-
-              // Update progress indicator based on state
-              if (status.state === "connecting") {
-                progress.report({ message: "Connecting to server..." });
-              } else if (status.state === "timeout_retrying") {
-                progress.report({
-                  message: `Retrying connection (${status.retryCount || 0}/${
-                    mcpClient?.getReSyncConfig().maxRetries || 3
-                  })...`,
-                });
-              }
-            });
-
-            context.subscriptions.push(stateSubscription);
-
-            progress.report({ message: "Initializing connection..." });
-            await mcpClient.start();
-
-            progress.report({ message: "Server ready" });
-            outputChannel.appendLine(
-              "MCP ACS Screenshot server started successfully"
-            );
-
-            // Set the client in the accessor for language server access
-            mcpClientAccessor.setClient(mcpClient);
-          } catch (error) {
-            outputChannel.appendLine(`Failed to start MCP server: ${error}`);
-            if (process.env.NODE_ENV === "production") {
-              vscode.window.showErrorMessage(
-                "Failed to start MCP ACS Screenshot server"
-              );
-            }
-          }
-        }
-      );
+      // Set the client in the accessor for language server access
+      mcpClientAccessor.setClient(mcpClient);
+    } catch (error) {
+      outputChannel.appendLine(`Failed to start MCP server: ${error}`);
+      if (process.env.NODE_ENV === "production") {
+        vscode.window.showErrorMessage(
+          "Failed to start MCP ACS Screenshot server"
+        );
+      }
     }
   }
 
@@ -293,175 +232,6 @@ export async function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  // Diagnostic commands
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "mcp-screenshot.reconnectToServer",
-      async () => {
-        if (!mcpClient) {
-          vscode.window.showErrorMessage(
-            "MCP ACS Screenshot server not running"
-          );
-          return;
-        }
-
-        try {
-          outputChannel.appendLine(
-            "Reconnecting to MCP ACS Screenshot server..."
-          );
-          const success = await mcpClient.reconnect();
-
-          if (success) {
-            vscode.window.showInformationMessage(
-              "Reconnected to MCP ACS Screenshot server"
-            );
-            outputChannel.appendLine("Reconnection successful");
-          } else {
-            vscode.window.showErrorMessage(
-              "Failed to reconnect to MCP ACS Screenshot server"
-            );
-            outputChannel.appendLine("Reconnection failed");
-          }
-        } catch (error: any) {
-          vscode.window.showErrorMessage(
-            `Reconnection error: ${error.message || error}`
-          );
-          outputChannel.appendLine(
-            `Reconnection error: ${error.message || error}`
-          );
-        }
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "mcp-screenshot.restartServer",
-      async () => {
-        if (!mcpClient) {
-          vscode.window.showErrorMessage(
-            "MCP ACS Screenshot server not running"
-          );
-          return;
-        }
-
-        try {
-          outputChannel.appendLine("Restarting MCP ACS Screenshot server...");
-          mcpClient.stop();
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          await mcpClient.start();
-          vscode.window.showInformationMessage(
-            "MCP ACS Screenshot server restarted successfully"
-          );
-          outputChannel.appendLine("Server restarted successfully");
-        } catch (error: any) {
-          vscode.window.showErrorMessage(
-            `Restart error: ${error.message || error}`
-          );
-          outputChannel.appendLine(`Restart error: ${error.message || error}`);
-        }
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "mcp-screenshot.showDiagnostics",
-      async () => {
-        if (!mcpClient) {
-          vscode.window.showErrorMessage(
-            "MCP ACS Screenshot server not running"
-          );
-          return;
-        }
-
-        try {
-          const diagnostics = mcpClient.getDiagnostics();
-
-          // Show diagnostics in output channel
-          outputChannel.clear();
-          outputChannel.show(true);
-          outputChannel.appendLine("=".repeat(80));
-          outputChannel.appendLine("MCP ACS Screenshot Diagnostics");
-          outputChannel.appendLine("=".repeat(80));
-          outputChannel.appendLine("");
-          outputChannel.appendLine(`Extension: ${diagnostics.extensionName}`);
-          outputChannel.appendLine(
-            `Connection State: ${diagnostics.connectionState}`
-          );
-          outputChannel.appendLine(
-            `Process Running: ${diagnostics.processRunning ? "Yes" : "No"}`
-          );
-          if (diagnostics.processId) {
-            outputChannel.appendLine(`Process ID: ${diagnostics.processId}`);
-          }
-          outputChannel.appendLine("");
-          outputChannel.appendLine(
-            `Pending Requests: ${diagnostics.pendingRequestCount}`
-          );
-
-          if (diagnostics.pendingRequests.length > 0) {
-            outputChannel.appendLine("");
-            outputChannel.appendLine("Active Requests:");
-            for (const req of diagnostics.pendingRequests) {
-              outputChannel.appendLine(
-                `  - [${req.id}] ${req.method} (${req.elapsedMs}ms elapsed)`
-              );
-            }
-          }
-
-          if (diagnostics.lastError) {
-            outputChannel.appendLine("");
-            outputChannel.appendLine(
-              `Last Error: ${diagnostics.lastError.message}`
-            );
-            outputChannel.appendLine(
-              `  Timestamp: ${new Date(
-                diagnostics.lastError.timestamp
-              ).toISOString()}`
-            );
-          }
-
-          if (diagnostics.recentCommunication.length > 0) {
-            outputChannel.appendLine("");
-            outputChannel.appendLine("Recent Communication (last 10):");
-            const recent = diagnostics.recentCommunication.slice(-10);
-            for (const comm of recent) {
-              const timestamp = new Date(comm.timestamp).toISOString();
-              const status = comm.success ? "✓" : "✗";
-              const method = comm.method || "notification";
-              outputChannel.appendLine(
-                `  ${status} [${timestamp}] ${comm.type}: ${method}`
-              );
-            }
-          }
-
-          if (diagnostics.stateHistory.length > 0) {
-            outputChannel.appendLine("");
-            outputChannel.appendLine("State History (last 10):");
-            const history = diagnostics.stateHistory.slice(-10);
-            for (const state of history) {
-              const timestamp = new Date(state.timestamp).toISOString();
-              outputChannel.appendLine(
-                `  [${timestamp}] ${state.state}: ${state.message}`
-              );
-            }
-          }
-
-          outputChannel.appendLine("");
-          outputChannel.appendLine("=".repeat(80));
-        } catch (error: any) {
-          vscode.window.showErrorMessage(
-            `Failed to get diagnostics: ${error.message || error}`
-          );
-          outputChannel.appendLine(
-            `Failed to get diagnostics: ${error.message || error}`
-          );
-        }
-      }
-    )
-  );
-
   // Start language server
   try {
     await startLanguageServer(context);
@@ -498,21 +268,6 @@ export async function activate(context: vscode.ExtensionContext) {
         label: "Capture Region",
         command: "mcp-screenshot.captureRegion",
         description: "Select a region to capture",
-      },
-      {
-        label: "Reconnect to Server",
-        command: "mcp-screenshot.reconnectToServer",
-        description: "Reconnect to MCP server",
-      },
-      {
-        label: "Restart Server",
-        command: "mcp-screenshot.restartServer",
-        description: "Restart MCP server",
-      },
-      {
-        label: "Show Diagnostics",
-        command: "mcp-screenshot.showDiagnostics",
-        description: "Show server diagnostics",
       },
     ],
   });
@@ -632,15 +387,6 @@ async function captureFullScreen() {
     return;
   }
 
-  // Check if server is actually connected
-  const status = mcpClient.getConnectionStatus();
-  if (status.state !== "connected") {
-    vscode.window.showErrorMessage(
-      `MCP ACS Screenshot server not ready (${status.state})`
-    );
-    return;
-  }
-
   try {
     const config = vscode.workspace.getConfiguration("mcpScreenshot");
     const format = config.get("defaultFormat", "png");
@@ -696,15 +442,6 @@ async function captureFullScreen() {
 async function captureWindow() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
-    return;
-  }
-
-  // Check if server is actually connected
-  const status = mcpClient.getConnectionStatus();
-  if (status.state !== "connected") {
-    vscode.window.showErrorMessage(
-      `MCP ACS Screenshot server not ready (${status.state})`
-    );
     return;
   }
 
@@ -772,15 +509,6 @@ async function captureWindow() {
 async function captureRegion() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
-    return;
-  }
-
-  // Check if server is actually connected
-  const status = mcpClient.getConnectionStatus();
-  if (status.state !== "connected") {
-    vscode.window.showErrorMessage(
-      `MCP ACS Screenshot server not ready (${status.state})`
-    );
     return;
   }
 
@@ -864,15 +592,6 @@ async function listDisplays() {
     return;
   }
 
-  // Check if server is actually connected
-  const status = mcpClient.getConnectionStatus();
-  if (status.state !== "connected") {
-    vscode.window.showErrorMessage(
-      `MCP ACS Screenshot server not ready (${status.state})`
-    );
-    return;
-  }
-
   try {
     outputChannel.appendLine("Listing displays...");
     const result = await mcpClient.listDisplays();
@@ -904,15 +623,6 @@ async function listDisplays() {
 async function listWindows() {
   if (!mcpClient) {
     vscode.window.showErrorMessage("MCP ACS Screenshot server not running");
-    return;
-  }
-
-  // Check if server is actually connected
-  const status = mcpClient.getConnectionStatus();
-  if (status.state !== "connected") {
-    vscode.window.showErrorMessage(
-      `MCP ACS Screenshot server not ready (${status.state})`
-    );
     return;
   }
 
