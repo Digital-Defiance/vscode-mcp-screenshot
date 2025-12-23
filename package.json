@@ -2,7 +2,7 @@
   "name": "mcp-screenshot",
   "displayName": "MCP ACS Screenshot",
   "description": "Cross-platform screenshot capture for VS Code with MCP integration and Language Server Protocol support for intelligent code assistance. Part of the Digital Defiance AI Capabilities Suite.",
-  "version": "1.5.27",
+  "version": "1.5.28",
   "publisher": "DigitalDefiance",
   "packageManager": "yarn@4.12.0",
   "icon": "images/icon.png",
@@ -73,6 +73,10 @@
               "minimum": 1,
               "maximum": 100,
               "description": "Quality for lossy formats"
+            },
+            "savePath": {
+              "type": "string",
+              "description": "File path to save screenshot (optional, returns base64 if not provided)"
             }
           }
         }
@@ -93,6 +97,26 @@
             "windowTitle": {
               "type": "string",
               "description": "Window title to capture"
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "png",
+                "jpeg",
+                "webp",
+                "bmp"
+              ],
+              "description": "Image format"
+            },
+            "quality": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Quality for lossy formats"
+            },
+            "savePath": {
+              "type": "string",
+              "description": "File path to save screenshot (optional, returns base64 if not provided)"
             }
           }
         }
@@ -125,6 +149,26 @@
             "height": {
               "type": "number",
               "description": "Height"
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "png",
+                "jpeg",
+                "webp",
+                "bmp"
+              ],
+              "description": "Image format"
+            },
+            "quality": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Quality for lossy formats"
+            },
+            "savePath": {
+              "type": "string",
+              "description": "File path to save screenshot (optional, returns base64 if not provided)"
             }
           },
           "required": [

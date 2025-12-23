@@ -100,7 +100,9 @@ export class MCPScreenshotClient extends BaseMCPClient {
     windowId?: string;
     windowTitle?: string;
     format: string;
+    quality?: number;
     includeFrame?: boolean;
+    savePath?: string;
   }): Promise<any> {
     return this.callTool("screenshot_capture_window", params);
   }
@@ -111,6 +113,8 @@ export class MCPScreenshotClient extends BaseMCPClient {
     width: number;
     height: number;
     format: string;
+    quality?: number;
+    savePath?: string;
   }): Promise<any> {
     return this.callTool("screenshot_capture_region", params);
   }

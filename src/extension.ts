@@ -78,15 +78,75 @@ export async function activate(context: vscode.ExtensionContext) {
                 maximum: 100,
                 description: "Quality for lossy formats",
               },
+              savePath: {
+                type: "string",
+                description:
+                  "File path to save screenshot (optional, returns base64 if not provided)",
+              },
             },
           },
           invoke: async (
             options: vscode.LanguageModelToolInvocationOptions<any>,
             token: vscode.CancellationToken
           ) => {
-            await captureFullScreen();
+            const args = options.input as any;
+            const result = await captureFullScreenWithArgs(args);
             return new vscode.LanguageModelToolResult([
-              new vscode.LanguageModelTextPart("Screenshot captured"),
+              new vscode.LanguageModelTextPart(JSON.stringify(result)),
+            ]);
+          },
+        },
+      },
+      {
+        name: "screenshot_capture_region",
+        tool: {
+          description: "Capture a rectangular region of the screen",
+          inputSchema: {
+            type: "object",
+            properties: {
+              x: {
+                type: "number",
+                description: "X coordinate",
+              },
+              y: {
+                type: "number",
+                description: "Y coordinate",
+              },
+              width: {
+                type: "number",
+                description: "Width",
+              },
+              height: {
+                type: "number",
+                description: "Height",
+              },
+              format: {
+                type: "string",
+                enum: ["png", "jpeg", "webp", "bmp"],
+                description: "Image format",
+              },
+              quality: {
+                type: "number",
+                minimum: 1,
+                maximum: 100,
+                description: "Quality for lossy formats",
+              },
+              savePath: {
+                type: "string",
+                description:
+                  "File path to save screenshot (optional, returns base64 if not provided)",
+              },
+            },
+            required: ["x", "y", "width", "height"],
+          },
+          invoke: async (
+            options: vscode.LanguageModelToolInvocationOptions<any>,
+            token: vscode.CancellationToken
+          ) => {
+            const args = options.input as any;
+            const result = await captureRegionWithArgs(args);
+            return new vscode.LanguageModelToolResult([
+              new vscode.LanguageModelTextPart(JSON.stringify(result)),
             ]);
           },
         },
@@ -102,15 +162,32 @@ export async function activate(context: vscode.ExtensionContext) {
                 type: "string",
                 description: "Window title to capture",
               },
+              format: {
+                type: "string",
+                enum: ["png", "jpeg", "webp", "bmp"],
+                description: "Image format",
+              },
+              quality: {
+                type: "number",
+                minimum: 1,
+                maximum: 100,
+                description: "Quality for lossy formats",
+              },
+              savePath: {
+                type: "string",
+                description:
+                  "File path to save screenshot (optional, returns base64 if not provided)",
+              },
             },
           },
           invoke: async (
             options: vscode.LanguageModelToolInvocationOptions<any>,
             token: vscode.CancellationToken
           ) => {
-            await captureWindow();
+            const args = options.input as any;
+            const result = await captureWindowWithArgs(args);
             return new vscode.LanguageModelToolResult([
-              new vscode.LanguageModelTextPart("Window captured"),
+              new vscode.LanguageModelTextPart(JSON.stringify(result)),
             ]);
           },
         },
@@ -624,6 +701,111 @@ export async function deactivate() {
   }
 
   outputChannel.dispose();
+}
+
+/**
+ * Helper function to capture full screen with arguments from Language Model Tools API
+ */
+async function captureFullScreenWithArgs(args: {
+  format?: string;
+  quality?: number;
+  savePath?: string;
+}): Promise<any> {
+  if (!mcpClient) {
+    return {
+      status: "error",
+      message: "MCP ACS Screenshot server not running",
+    };
+  }
+
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    return { status: "error", message: `Server not ready (${status.state})` };
+  }
+
+  const config = vscode.workspace.getConfiguration("mcpScreenshot");
+  const format = args.format || config.get("defaultFormat", "png");
+  const quality = args.quality || config.get("defaultQuality", 90);
+  const enablePIIMasking = config.get("enablePIIMasking", false);
+
+  return await mcpClient.captureFullScreen({
+    format,
+    quality,
+    enablePIIMasking,
+    savePath: args.savePath,
+  });
+}
+
+/**
+ * Helper function to capture region with arguments from Language Model Tools API
+ */
+async function captureRegionWithArgs(args: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  format?: string;
+  quality?: number;
+  savePath?: string;
+}): Promise<any> {
+  if (!mcpClient) {
+    return {
+      status: "error",
+      message: "MCP ACS Screenshot server not running",
+    };
+  }
+
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    return { status: "error", message: `Server not ready (${status.state})` };
+  }
+
+  const config = vscode.workspace.getConfiguration("mcpScreenshot");
+  const format = args.format || config.get("defaultFormat", "png");
+  const quality = args.quality || config.get("defaultQuality", 90);
+
+  return await mcpClient.captureRegion({
+    x: args.x,
+    y: args.y,
+    width: args.width,
+    height: args.height,
+    format,
+    quality,
+    savePath: args.savePath,
+  });
+}
+
+/**
+ * Helper function to capture window with arguments from Language Model Tools API
+ */
+async function captureWindowWithArgs(args: {
+  windowTitle: string;
+  format?: string;
+  quality?: number;
+  savePath?: string;
+}): Promise<any> {
+  if (!mcpClient) {
+    return {
+      status: "error",
+      message: "MCP ACS Screenshot server not running",
+    };
+  }
+
+  const status = mcpClient.getConnectionStatus();
+  if (status.state !== "connected") {
+    return { status: "error", message: `Server not ready (${status.state})` };
+  }
+
+  const config = vscode.workspace.getConfiguration("mcpScreenshot");
+  const format = args.format || config.get("defaultFormat", "png");
+  const quality = args.quality || config.get("defaultQuality", 90);
+
+  return await mcpClient.captureWindow({
+    windowTitle: args.windowTitle,
+    format,
+    quality,
+    savePath: args.savePath,
+  });
 }
 
 async function captureFullScreen() {
