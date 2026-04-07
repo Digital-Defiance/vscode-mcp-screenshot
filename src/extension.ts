@@ -556,7 +556,7 @@ export async function activate(context: vscode.ExtensionContext) {
   outputChannel.appendLine("MCP ACS Screenshot extension activated");
 
   // Register with shared status bar
-  await registerExtension("mcp-screenshot", {
+  const regPromise = registerExtension("mcp-screenshot", {
     displayName: "MCP ACS Screenshot",
     status: "ok",
     settingsQuery: "mcpScreenshot",
@@ -593,6 +593,10 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     ],
   });
+  Promise.race([
+    regPromise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('ACS registration timeout')), 5000)),
+  ]).catch((err) => console.error('[Screenshot] ACS registration:', err.message));
 
   // Configure shared status bar output channel (idempotent - only first call takes effect)
   setOutputChannel(outputChannel);
