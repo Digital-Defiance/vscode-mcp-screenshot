@@ -27,19 +27,14 @@
     "privacy"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onLanguage:javascript",
-    "onLanguage:typescript",
-    "onLanguage:javascriptreact",
-    "onLanguage:typescriptreact",
-    "onLanguage:json"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "files": [
     "package.json",
     "README.md",
     "CHANGELOG.md",
-    "out/*.js",
+    "out/extension.js",
     "images/icon.png"
   ],
   "contributes": {
@@ -244,14 +239,6 @@
       {
         "command": "mcp-screenshot.openSettings",
         "title": "MCP ACS Screenshot: Open Settings"
-      },
-      {
-        "command": "mcp.screenshot.capture",
-        "title": "MCP ACS Screenshot: Capture (LSP)"
-      },
-      {
-        "command": "mcp.screenshot.getCapabilities",
-        "title": "MCP ACS Screenshot: Get Capabilities (LSP)"
       }
     ],
     "configuration": {
@@ -374,12 +361,6 @@
         },
         {
           "command": "mcp-screenshot.openSettings"
-        },
-        {
-          "command": "mcp.screenshot.capture"
-        },
-        {
-          "command": "mcp.screenshot.getCapabilities"
         }
       ]
     }
@@ -412,10 +393,7 @@
     "@ai-capabilities-suite/mcp-client-base": "1.0.2",
     "@ai-capabilities-suite/mcp-screenshot": "^1.5.23",
     "@ai-capabilities-suite/vscode-shared-status-bar": "^1.0.24",
-    "@modelcontextprotocol/sdk": "^1.23.0",
-    "vscode-languageclient": "^10.0.0-next.15",
-    "vscode-languageserver": "^10.0.0-next.15",
-    "vscode-languageserver-textdocument": "^1.0.12"
+    "@modelcontextprotocol/sdk": "^1.23.0"
   },
   "repository": {
     "type": "git",
