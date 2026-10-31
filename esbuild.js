@@ -1,11 +1,17 @@
 const esbuild = require("esbuild");
+const { globSync } = require("glob");
 
 const production = process.argv.includes("--production");
+const test = process.argv.includes("--test");
 const watch = process.argv.includes("--watch");
 
 async function main() {
+  const entryPoints = test
+    ? ["src/test/runTest.ts", "src/test/suite/index.ts", ...globSync("src/test/suite/*.test.ts")]
+    : ["src/extension.ts"];
+
   const ctx = await esbuild.context({
-    entryPoints: ["src/extension.ts"],
+    entryPoints,
     bundle: true,
     format: "cjs",
     minify: production,
@@ -13,6 +19,7 @@ async function main() {
     sourcesContent: false,
     platform: "node",
     outdir: "out",
+    outbase: "src",
     external: ["vscode"],
     logLevel: "silent",
     plugins: [
