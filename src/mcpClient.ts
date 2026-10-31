@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as fs from "fs";
 import * as path from "path";
 import {
   BaseMCPClient,
@@ -33,13 +34,32 @@ export class MCPScreenshotClient extends BaseMCPClient {
         }
 
         if (extensionPath) {
-          serverCommand = "node";
-          const serverScript = path.resolve(
-            extensionPath,
-            "../mcp-screenshot/dist/cli.js"
+          const localServerCandidates = [
+            path.resolve(
+              extensionPath,
+              "node_modules/@ai-capabilities-suite/mcp-screenshot/dist/cli.js"
+            ),
+            path.resolve(
+              extensionPath,
+              "../mcp-screenshot/dist/cli.js"
+            ),
+          ];
+          const serverScript = localServerCandidates.find((candidate) =>
+            fs.existsSync(candidate)
           );
-          serverArgs = [serverScript];
-          this.log("info", `Test mode: Using local server at ${serverScript}`);
+
+          if (serverScript) {
+            serverCommand = "node";
+            serverArgs = [serverScript];
+            this.log("info", `Test mode: Using local server at ${serverScript}`);
+          } else {
+            this.log(
+              "warn",
+              `Test mode: Local MCP server not found. Checked: ${localServerCandidates.join(
+                ", "
+              )}`
+            );
+          }
         } else {
           this.log(
             "info",

@@ -1,5 +1,6 @@
 out
 node_modules/
+.yarn/install-state.gz
 .vscode-test/
 *.vsix
 .DS_Store

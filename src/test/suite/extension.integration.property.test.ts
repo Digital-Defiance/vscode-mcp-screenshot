@@ -3,10 +3,10 @@ import * as fc from "fast-check";
 import * as vscode from "vscode";
 
 /**
- * Feature: mcp-screenshot-lsp, Property 17: Backward compatibility
+ * Feature: mcp-screenshot, Property 17: Backward compatibility
  *
  * Property: For any existing extension command, it should continue to work
- * unchanged after LSP integration
+ * unchanged after extension integration
  *
  * Validates: Requirements 6.6
  */
@@ -22,14 +22,14 @@ suite("Extension Integration - Property-Based Tests", () => {
       await ext.activate();
     }
 
-    // Give the extension and language server time to start
+    // Give the extension and extension time to start
     await new Promise((resolve) => setTimeout(resolve, 3000));
   });
 
   test("Property 17: Backward compatibility - all existing commands remain registered", async () => {
     /**
      * Property: For any existing command from the original extension,
-     * it should still be registered after LSP integration
+     * it should still be registered after extension integration
      */
     await fc.assert(
       fc.asyncProperty(fc.constant(null), async () => {
@@ -57,7 +57,7 @@ suite("Extension Integration - Property-Based Tests", () => {
 
   test("Property 17: Backward compatibility - configuration schema unchanged", () => {
     /**
-     * Property: For any configuration property that existed before LSP,
+     * Property: For any configuration property that existed before this integration,
      * it should still exist with the same type
      */
     fc.assert(
@@ -95,19 +95,19 @@ suite("Extension Integration - Property-Based Tests", () => {
   test("Property 17: Backward compatibility - command handlers are registered", () => {
     /**
      * Property: For any existing command, its handler should be registered
-     * and not throw errors during registration (LSP integration should not
+     * and not throw errors during registration (extension integration should not
      * break command registration)
      */
     fc.assert(
       fc.property(fc.constant(null), () => {
         // This test verifies that the extension activated successfully
-        // and all command handlers were registered without LSP errors
+        // and all command handlers were registered without extra services errors
         const ext = vscode.extensions.getExtension(
           "DigitalDefiance.mcp-screenshot"
         );
 
         // If extension is active, all commands were registered successfully
-        // without LSP integration errors
+        // without extension integration errors
         return ext !== undefined && ext.isActive;
       }),
       { numRuns: 100 }
@@ -116,7 +116,7 @@ suite("Extension Integration - Property-Based Tests", () => {
 
   test("Property 17: Backward compatibility - extension activation unchanged", () => {
     /**
-     * Property: The extension should activate successfully with LSP integration
+     * Property: The extension should activate successfully with extension integration
      */
     fc.assert(
       fc.property(fc.constant(null), () => {
@@ -154,7 +154,7 @@ suite("Extension Integration - Property-Based Tests", () => {
     this.timeout(60000);
     /**
      * Property: For any configuration property, updating it should work
-     * the same way as before LSP integration
+     * the same way as before extension integration
      */
     await fc.assert(
       fc.asyncProperty(

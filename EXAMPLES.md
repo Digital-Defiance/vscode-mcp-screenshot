@@ -1,6 +1,6 @@
-# MCP ACS Screenshot LSP Examples
+# MCP ACS Screenshot API Examples
 
-This document provides comprehensive examples of using the Language Server Protocol (LSP) features in the MCP ACS Screenshot extension.
+This document provides examples of using the MCP ACS Screenshot APIs in agent workflows.
 
 ## Table of Contents
 
@@ -303,7 +303,6 @@ Execute screenshot capture programmatically:
 ```javascript
 // AI agent executes capture command
 const result = await vscode.commands.executeCommand(
-  'mcp.screenshot.capture',
   {
     type: 'fullscreen',
     format: 'png',
@@ -351,7 +350,6 @@ Query screenshot system capabilities:
 ```javascript
 // AI agent gets capabilities
 const capabilities = await vscode.commands.executeCommand(
-  'mcp.screenshot.getCapabilities'
 );
 
 console.log('System capabilities:', capabilities);
@@ -371,7 +369,6 @@ Commands return structured errors on failure:
 ```javascript
 try {
   const result = await vscode.commands.executeCommand(
-    'mcp.screenshot.capture',
     { format: 'invalid' }
   );
   
@@ -395,7 +392,6 @@ try {
 async function aiAgentWorkflow() {
   // 1. Get capabilities
   const capabilities = await vscode.commands.executeCommand(
-    'mcp.screenshot.getCapabilities'
   );
   
   console.log('Supported formats:', capabilities.result.formats);
@@ -416,7 +412,6 @@ async function aiAgentWorkflow() {
   
   // 4. Capture screenshot
   const screenshot = await vscode.commands.executeCommand(
-    'mcp.screenshot.capture',
     {
       format: 'png',
       quality: 95,
@@ -438,11 +433,11 @@ async function aiAgentWorkflow() {
 
 ### JavaScript Files (.js)
 
-Full LSP features available:
+Screenshot API examples:
 
 ```javascript
 // hover-example.js
-// All LSP features work in JavaScript files
+// All screenshot API features work in JavaScript files
 
 async function captureScreenshot() {
   // Hover, completion, diagnostics, code lenses all work
@@ -457,11 +452,11 @@ async function captureScreenshot() {
 
 ### TypeScript Files (.ts)
 
-Full LSP features with type information:
+Screenshot API usage with type information:
 
 ```typescript
 // hover-example.ts
-// All LSP features work in TypeScript files
+// All screenshot API features work in TypeScript files
 
 interface ScreenshotConfig {
   format: 'png' | 'jpeg' | 'webp';
@@ -478,14 +473,14 @@ async function captureScreenshot(config: ScreenshotConfig): Promise<any> {
 
 ### JSX Files (.jsx)
 
-Full LSP features in React components:
+Screenshot API usage in React components:
 
 ```jsx
 // ScreenshotButton.jsx
 import React from 'react';
 
 function ScreenshotButton() {
-  // All LSP features work in JSX files
+  // All screenshot API features work in JSX files
   const handleCapture = async () => {
     const screenshot = await captureFullScreen({
       format: 'png',
@@ -507,7 +502,7 @@ export default ScreenshotButton;
 
 ### TSX Files (.tsx)
 
-Full LSP features in TypeScript React components:
+Screenshot API usage in TypeScript React components:
 
 ```tsx
 // ScreenshotButton.tsx
@@ -519,7 +514,7 @@ interface Props {
 }
 
 const ScreenshotButton: React.FC<Props> = ({ format, quality }) => {
-  // All LSP features work in TSX files
+  // All screenshot API features work in TSX files
   const handleCapture = async () => {
     const screenshot = await captureFullScreen({
       format,
@@ -571,7 +566,7 @@ Diagnostics appear for invalid values:
 
 ### Pattern Detection
 
-The LSP detects various screenshot patterns:
+The extension detects various screenshot patterns:
 
 ```javascript
 // Pattern: Capture operations
@@ -603,7 +598,7 @@ async function getWindowInfo() {
 
 ### Performance Optimization
 
-The LSP uses caching and debouncing for performance:
+The extension uses caching and debouncing for performance:
 
 ```javascript
 // Rapid typing triggers debounced validation
@@ -620,10 +615,10 @@ async function captureWithConfig() {
 
 ### Error Recovery
 
-The LSP handles errors gracefully:
+The extension handles errors gracefully:
 
 ```javascript
-// MCP client not available - LSP continues with static features
+// MCP client not available - extension continues with static features
 async function captureWhenOffline() {
   // Hover and completion still work
   // Code lenses may not execute
@@ -655,7 +650,7 @@ Use code completion (Ctrl+Space) inside configuration objects to discover availa
 
 ### 5. Check File Type Support
 
-Ensure you're working in a supported file type (.js, .ts, .jsx, .tsx, .json) to get LSP features.
+Ensure you're working in a supported file type (.js, .ts, .jsx, .tsx, .json) to get screenshot API features.
 
 ### 6. Use AI Agent Commands for Automation
 
@@ -671,11 +666,10 @@ Use diagnostics to ensure your screenshot configurations are always valid.
 
 ## Troubleshooting
 
-### LSP Features Not Working
+### screenshot API features Not Working
 
-1. Check file type - LSP only works in supported file types
+1. Check file type - extension only works in supported file types
 2. Check extension activation - Look for "MCP ACS Screenshot" in output panel
-3. Check language server status - Look for language server logs
 4. Restart VS Code if features stop working
 
 ### Code Lenses Not Appearing
