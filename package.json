@@ -35,6 +35,13 @@
     "onLanguage:json"
   ],
   "main": "./out/extension.js",
+  "files": [
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "out/*.js",
+    "images/icon.png"
+  ],
   "contributes": {
     "chatParticipants": [
       {
